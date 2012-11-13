@@ -1,6 +1,7 @@
 from redis import Redis, ConnectionPool
 from copy import deepcopy
 from math import ceil
+from decimal import Decimal
 
 class Leaderboard(object):
   VERSION = "2.0.0"
@@ -59,3 +60,33 @@ class Leaderboard(object):
           self.options.pop('db', self.DEFAULT_REDIS_DB)
         )
       self.redis_connection = Redis(**self.options)
+
+  def delete_leaderboard(self):
+    self.delete_leaderboard_named(self.leaderboard_name)
+
+  def delete_leaderboard_named(self, leaderboard_name):
+    pipeline = self.redis_connection.pipeline()
+    pipeline.delete(leaderboard_name)
+    pipeline.execute()
+
+  def rank_member(self, member, score, member_data = None):
+    self.rank_member_in(self.leaderboard_name, member, score, member_data)
+
+  def rank_member_in(self, leaderboard_name, member, score, member_data):
+    pipeline = self.redis_connection.pipeline()
+    pipeline.zadd(leaderboard_name, member, score)
+    pipeline.execute()
+
+  def total_members(self):
+    self.total_members_in(self.leaderboard_name)
+
+  def total_members_in(self, leaderboard_name):
+    self.redis_connection.zcard(leaderboard_name)
+
+  def remove_member(self, member):
+    self.remove_member_from(self.leaderboard_name, member)
+
+  def remove_member_from(self, leaderboard_name, member):
+    pipeline = self.redis_connection.pipeline()
+    pipeline.zrem(leaderboard_name, member)
+    pipeline.execute()
