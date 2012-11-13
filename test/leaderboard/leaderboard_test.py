@@ -1,6 +1,7 @@
 from redis import Redis, ConnectionPool
 from leaderboard import Leaderboard
 import unittest
+import time
 import sure
 
 class LeaderboardTest(unittest.TestCase):
@@ -112,6 +113,18 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.percentile_for('member_3').should.eql(17)
     self.leaderboard.percentile_for('member_4').should.eql(25)
     self.leaderboard.percentile_for('member_12').should.eql(92)
+
+  def test_expire_leaderboard(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.expire_leaderboard(3)
+    ttl = self.leaderboard.redis_connection.ttl(self.leaderboard.leaderboard_name)
+    ttl.should.be.greater_than(1)
+
+  def test_expire_leaderboard_at(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.expire_leaderboard_at(int(time.time() + 10))
+    ttl = self.leaderboard.redis_connection.ttl(self.leaderboard.leaderboard_name)
+    ttl.should.be.lower_than(11)
 
   def test_leaders(self):
     self.__rank_members_in_leaderboard(27)

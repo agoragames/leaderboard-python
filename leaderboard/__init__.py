@@ -181,6 +181,18 @@ class Leaderboard(object):
     else:
       return percentile
 
+  def expire_leaderboard(self, seconds):
+    self.expire_leaderboard_for(self.leaderboard_name, seconds)
+
+  def expire_leaderboard_for(self, leaderboard_name, seconds):
+    self.redis_connection.expire(leaderboard_name, seconds)
+
+  def expire_leaderboard_at(self, timestamp):
+    self.expire_leaderboard_at_for(self.leaderboard_name, timestamp)
+
+  def expire_leaderboard_at_for(self, leaderboard_name, timestamp):
+    self.redis_connection.expireat(leaderboard_name, timestamp)
+
   def leaders(self, current_page, **options):
     return self.leaders_in(self.leaderboard_name, current_page, **options)
 
