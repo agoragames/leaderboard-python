@@ -148,6 +148,23 @@ class Leaderboard(object):
   def remove_members_in_score_range_in(self, leaderboard_name, min_score, max_score):
     self.redis_connection.zremrangebyscore(leaderboard_name, min_score, max_score)
 
+  def page_for(self, member, page_size = DEFAULT_PAGE_SIZE):
+    return self.page_for_in(self.leaderboard_name, member, page_size)
+  
+  def page_for_in(self, leaderboard_name, member, page_size = DEFAULT_PAGE_SIZE):
+    rank_for_member = None
+    if self.order == self.DESC:
+      rank_for_member = self.redis_connection.zrank(leaderboard_name, member)
+    else:
+      rank_for_memebr = self.redis_connection.zrevrank(leaderboard_name, member)
+
+    if rank_for_member == None:
+      rank_for_member = 0
+    else:
+      rank_for_member += 1
+
+    return math.ceil(float(rank_for_member) / float(page_size))
+
   def leaders(self, current_page, **options):
     return self.leaders_in(self.leaderboard_name, current_page, **options)
 
