@@ -53,6 +53,9 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.total_members().should.be(26)
     self.leaderboard.total_pages().should.be(2)
 
+  def test_total_members_in_score_range(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.total_members_in_score_range(2, 4).should.be(3)
 
 
   def __rank_members_in_leaderboard(self, members_to_add = 5):

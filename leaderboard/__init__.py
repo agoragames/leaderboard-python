@@ -98,3 +98,9 @@ class Leaderboard(object):
       page_size = self.page_size
 
     return math.ceil(self.total_members_in(leaderboard_name) / float(page_size))
+
+  def total_members_in_score_range(self, min_score, max_score):
+    return self.total_members_in_score_range_in(self.leaderboard_name, min_score, max_score)
+
+  def total_members_in_score_range_in(self, leaderboard_name, min_score, max_score):
+    return self.redis_connection.zcount(leaderboard_name, min_score, max_score)
