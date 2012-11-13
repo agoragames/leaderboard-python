@@ -142,6 +142,12 @@ class Leaderboard(object):
   def change_score_for_member_in(self, leaderboard_name, member, delta):
     self.redis_connection.zincrby(leaderboard_name, member, delta)
 
+  def remove_members_in_score_range(self, min_score, max_score):
+    self.remove_members_in_score_range_in(self.leaderboard_name, min_score, max_score)
+
+  def remove_members_in_score_range_in(self, leaderboard_name, min_score, max_score):
+    self.redis_connection.zremrangebyscore(leaderboard_name, min_score, max_score)
+
   def leaders(self, current_page, **options):
     return self.leaders_in(self.leaderboard_name, current_page, **options)
 

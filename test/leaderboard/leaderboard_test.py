@@ -83,6 +83,12 @@ class LeaderboardTest(unittest.TestCase):
     score_and_rank['score'].should.be(3.0)
     score_and_rank['rank'].should.be(3)
 
+  def test_remove_members_in_score_range(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.total_members().should.be(5)
+    self.leaderboard.remove_members_in_score_range(2, 4)
+    self.leaderboard.total_members().should.be(2)
+
   def test_leaders(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.leaders(1)
