@@ -156,6 +156,13 @@ class LeaderboardTest(unittest.TestCase):
     leaders = self.leaderboard.leaders(1, page_size = 5)
     len(leaders).should.be(5)
 
+  def test_leaders_with_optional_member_data(self):
+    self.__rank_members_in_leaderboard()
+    leaders = self.leaderboard.leaders(1, with_member_data = True)
+    len(leaders).should.be(5)
+    leaders[0]['member'].should.be('member_1')
+    leaders[0]['member_data'].should.be(str({'member_name': 'Leaderboard member 1'}))
+
   def test_ranked_in_list(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.ranked_in_list(['member_1', 'member_15', 'member_25'])

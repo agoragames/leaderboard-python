@@ -339,7 +339,8 @@ class Leaderboard(object):
       data['rank'] = responses[index * 2] + 1
       data['score'] = float(responses[index * 2 + 1])
 
-      # support for optional member data
+      if ('with_member_data' in options) and (True == options['with_member_data']):
+        data['member_data'] = self.member_data_for_in(leaderboard_name, member)
 
       ranks_for_members.append(data)
 
