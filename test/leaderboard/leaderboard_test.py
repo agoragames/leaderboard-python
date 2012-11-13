@@ -163,6 +163,20 @@ class LeaderboardTest(unittest.TestCase):
     leaders[0]['member'].should.be('member_1')
     leaders[0]['member_data'].should.be(str({'member_name': 'Leaderboard member 1'}))
 
+  def test_ranked_in_list_with_sort_by(self):
+    self.__rank_members_in_leaderboard(26)
+    leaders = self.leaderboard.ranked_in_list(['member_25', 'member_1', 'member_15'], sort_by = 'score')
+    len(leaders).should.be(3)
+    leaders[0]['member'].should.be('member_1')
+    leaders[1]['member'].should.be('member_15')
+    leaders[2]['member'].should.be('member_25')
+
+    leaders = self.leaderboard.ranked_in_list(['member_25', 'member_1', 'member_15'], sort_by = 'rank')
+    len(leaders).should.be(3)
+    leaders[0]['member'].should.be('member_1')
+    leaders[1]['member'].should.be('member_15')
+    leaders[2]['member'].should.be('member_25')
+
   def test_ranked_in_list(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.ranked_in_list(['member_1', 'member_15', 'member_25'])

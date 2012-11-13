@@ -344,7 +344,11 @@ class Leaderboard(object):
 
       ranks_for_members.append(data)
 
-    # support for sort_by in options
+    if 'sort_by' in options:
+      if 'rank' == options['sort_by']:
+        ranks_for_members = sorted(ranks_for_members, key = lambda member: member['rank'])
+      elif 'score' == options['sort_by']:
+        ranks_for_members = sorted(ranks_for_members, key = lambda member: member['score'])
 
     return ranks_for_members
 
