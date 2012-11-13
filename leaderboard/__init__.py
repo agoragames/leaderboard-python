@@ -50,8 +50,8 @@ class Leaderboard(object):
     if not self.order in [self.ASC, self.DESC]:
       raise ValueError("%s is not one of [%s]" % (self.order,  ",".join([self.ASC, self.DESC])))
 
-    self.redis_connection = self.options.pop('connection',None)
-    if not isinstance(self.redis_connection,Redis):
+    self.redis_connection = self.options.pop('connection', None)
+    if not isinstance(self.redis_connection, Redis):
       if 'connection_pool' not in self.options:
         self.options['connection_pool'] = self.pool(
           self.options.pop('host', self.DEFAULT_REDIS_HOST),
