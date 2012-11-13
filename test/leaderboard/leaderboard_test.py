@@ -39,6 +39,10 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.delete_leaderboard()
     self.leaderboard.redis_connection.exists('name').should.be.false
 
+  def test_member_data_for(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.member_data_for('member_1').should.eql(str({'member_name': 'Leaderboard member 1'}))
+
   def test_total_members(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.total_members().should.be(5)

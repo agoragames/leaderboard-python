@@ -71,10 +71,18 @@ class Leaderboard(object):
   def rank_member(self, member, score, member_data = None):
     self.rank_member_in(self.leaderboard_name, member, score, member_data)
 
-  def rank_member_in(self, leaderboard_name, member, score, member_data):
+  def rank_member_in(self, leaderboard_name, member, score, member_data = None):
     pipeline = self.redis_connection.pipeline()
     pipeline.zadd(leaderboard_name, member, score)
+    if member_data:
+      pipeline.hset(self._member_data_key(leaderboard_name), member, member_data)
     pipeline.execute()
+
+  def member_data_for(self, member):
+    return self.member_data_for_in(self.leaderboard_name, member)
+
+  def member_data_for_in(self, leaderboard_name, member):
+    return self.redis_connection.hget(self._member_data_key(leaderboard_name), member)
 
   def total_members(self):
     return self.total_members_in(self.leaderboard_name)
@@ -332,3 +340,5 @@ class Leaderboard(object):
     else:
       return connection.zrange(*args, **kwargs)
 
+  def _member_data_key(self, leaderboard_name):
+    return '%s:member_data' % leaderboard_name
