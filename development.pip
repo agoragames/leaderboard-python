@@ -1,5 +1,4 @@
 -r requirements.pip
 
-nose2
 sure
 unittest2
