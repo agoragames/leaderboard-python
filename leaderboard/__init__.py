@@ -150,6 +150,17 @@ class Leaderboard(object):
     else:
       return None
 
+  def all_leaders(self, **options):
+    return self.all_leaders_from(self.leaderboard_name, **options)
+
+  def all_leaders_from(self, leaderboard_name, **options):
+    raw_leader_data = self._range_method(self.redis_connection, leaderboard_name, 0, -1, withscores = False)
+
+    if raw_leader_data:
+      return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
+    else:
+      return []
+
   def ranked_in_list(self, members, **options):
     return self.ranked_in_list_in(self.leaderboard_name, members, **options)
 

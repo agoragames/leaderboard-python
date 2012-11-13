@@ -95,6 +95,12 @@ class LeaderboardTest(unittest.TestCase):
     leaders[1]['member'].should.be('member_15')
     leaders[2]['member'].should.be('member_25')
 
+  def test_all_leaders(self):
+    self.__rank_members_in_leaderboard(26)
+    leaders = self.leaderboard.all_leaders()
+    len(leaders).should.be(25)
+    leaders[0]['member'].should.be('member_25')
+
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })
