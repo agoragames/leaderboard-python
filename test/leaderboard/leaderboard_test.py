@@ -230,6 +230,15 @@ class LeaderboardTest(unittest.TestCase):
     members[0]['score'].should.be(25)
     members[24]['member'].should.eql('member_1')
 
+  def test_member_at(self):
+    self.__rank_members_in_leaderboard(51)
+    self.leaderboard.member_at(1)['rank'].should.be(1)
+    self.leaderboard.member_at(1)['score'].should.be(50.0)
+    self.leaderboard.member_at(26)['rank'].should.be(26)
+    self.leaderboard.member_at(50)['rank'].should.be(50)
+    self.leaderboard.member_at(51).should.be(None)
+    self.leaderboard.member_at(1, with_member_data = True)['member_data'].should.be(str({'member_name': 'Leaderboard member 1'}))
+  
   def test_around_me(self):
     self.__rank_members_in_leaderboard(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 1)
 

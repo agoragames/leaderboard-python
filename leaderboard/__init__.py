@@ -287,6 +287,19 @@ class Leaderboard(object):
     else:
       return []
 
+  def member_at(self, position, **options):
+    return self.member_at_in(self.leaderboard_name, position, **options)
+
+  def member_at_in(self, leaderboard_name, position, **options):
+    if position <= self.total_members_in(leaderboard_name):
+      page_size = options.get('page_size', self.page_size)
+      current_page = math.ceil(float(position) / float(page_size))
+      offset = (position - 1) % page_size
+
+      leaders = self.leaders_in(leaderboard_name, current_page, **options)
+      if leaders:
+        return leaders[offset]
+
   def around_me(self, member, **options):
     return self.around_me_in(self.leaderboard_name, member, **options)
   
