@@ -1,7 +1,6 @@
 from redis import Redis, ConnectionPool
 from copy import deepcopy
-from math import ceil
-from decimal import Decimal
+import math
 
 class Leaderboard(object):
   VERSION = "2.0.0"
@@ -78,10 +77,10 @@ class Leaderboard(object):
     pipeline.execute()
 
   def total_members(self):
-    self.total_members_in(self.leaderboard_name)
+    return self.total_members_in(self.leaderboard_name)
 
   def total_members_in(self, leaderboard_name):
-    self.redis_connection.zcard(leaderboard_name)
+    return self.redis_connection.zcard(leaderboard_name)
 
   def remove_member(self, member):
     self.remove_member_from(self.leaderboard_name, member)
@@ -90,3 +89,12 @@ class Leaderboard(object):
     pipeline = self.redis_connection.pipeline()
     pipeline.zrem(leaderboard_name, member)
     pipeline.execute()
+
+  def total_pages(self, page_size = None):
+    return self.total_pages_in(self.leaderboard_name, page_size)
+
+  def total_pages_in(self, leaderboard_name, page_size = None):
+    if page_size is None:
+      page_size = self.page_size
+
+    return math.ceil(self.total_members_in(leaderboard_name) / float(page_size))

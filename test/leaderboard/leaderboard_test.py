@@ -48,6 +48,13 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.remove_member('member_1')
     self.leaderboard.total_members().should.be(4)
 
+  def test_total_pages(self):
+    self.__rank_members_in_leaderboard(26)
+    self.leaderboard.total_members().should.be(26)
+    self.leaderboard.total_pages().should.be(2)
+
+
+
   def __rank_members_in_leaderboard(self, members_to_add = 5):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })
