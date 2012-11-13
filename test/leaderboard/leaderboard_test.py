@@ -76,6 +76,13 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.rank_for('member_1').should.be(1)
     self.leaderboard.score_for('member_1').should.be(99.0)
 
+  def test_score_and_rank_for(self):
+    self.__rank_members_in_leaderboard()
+    score_and_rank = self.leaderboard.score_and_rank_for('member_3')
+    score_and_rank['member'].should.be('member_3')
+    score_and_rank['score'].should.be(3.0)
+    score_and_rank['rank'].should.be(3)
+
   def test_leaders(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.leaders(1)

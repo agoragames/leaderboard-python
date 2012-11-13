@@ -126,6 +126,16 @@ class Leaderboard(object):
   def score_for_in(self, leaderboard_name, member):
     return float(self.redis_connection.zscore(leaderboard_name, member))
 
+  def score_and_rank_for(self, member, use_zero_index_for_rank = False, **options):
+    return self.score_and_rank_for_in(self.leaderboard_name, member)
+
+  def score_and_rank_for_in(self, leaderboard_name, member):
+    return {
+      'member' : member,
+      'score' : self.score_for_in(leaderboard_name, member),
+      'rank' : self.rank_for_in(leaderboard_name, member)
+    }
+
   def change_score_for(self, member, delta):
     self.change_score_for_member_in(self.leaderboard_name, member, delta)
 
