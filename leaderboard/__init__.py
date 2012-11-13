@@ -165,6 +165,22 @@ class Leaderboard(object):
 
     return math.ceil(float(rank_for_member) / float(page_size))
 
+  def percentile_for(self, member):
+    return self.percentile_for_in(self.leaderboard_name, member)
+
+  def percentile_for_in(self, leaderboard_name, member):
+    if not self.check_member_in(leaderboard_name, member):
+      return None
+
+    responses = self.redis_connection.pipeline().zcard(leaderboard_name).zrevrank(leaderboard_name, member).execute()
+
+    percentile = math.ceil((float((responses[0] - responses[1] - 1)) / float(responses[0]) * 100))
+
+    if self.order == self.ASC:      
+      return 100 - percentile
+    else:
+      return percentile
+
   def leaders(self, current_page, **options):
     return self.leaders_in(self.leaderboard_name, current_page, **options)
 

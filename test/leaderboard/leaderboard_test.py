@@ -104,6 +104,15 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.page_for('member_10', 10).should.be(2)
     self.leaderboard.page_for('member_1', 10).should.be(2)
 
+  def test_percentile_for(self):
+    self.__rank_members_in_leaderboard(13)
+
+    self.leaderboard.percentile_for('member_1').should.eql(0)
+    self.leaderboard.percentile_for('member_2').should.eql(9)
+    self.leaderboard.percentile_for('member_3').should.eql(17)
+    self.leaderboard.percentile_for('member_4').should.eql(25)
+    self.leaderboard.percentile_for('member_12').should.eql(92)
+
   def test_leaders(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.leaders(1)
