@@ -228,6 +228,44 @@ class Leaderboard(object):
     else:
       return []
 
+  def members_from_score_range(self, minimum_score, maximum_score, **options):
+    return self.members_from_score_range_in(self.leaderboard_name, minimum_score, maximum_score, **options)
+
+  def members_from_score_range_in(self, leaderboard_name, minimum_score, maximum_score, **options):
+    raw_leader_data = []
+    if self.order == self.DESC:
+      raw_leader_data = self.redis_connection.zrevrangebyscore(leaderboard_name, maximum_score, minimum_score)
+    else:
+      raw_leader_data = self.redis_connection.zrangebyscore(leaderboard_name, minimum_score, maximum_score)
+
+    if raw_leader_data:
+      return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
+    else:
+      return []
+
+  def members_from_rank_range(self, starting_rank, ending_rank, **options):
+    return self.members_from_rank_range_in(self.leaderboard_name, starting_rank, ending_rank, **options)
+
+  def members_from_rank_range_in(self, leaderboard_name, starting_rank, ending_rank, **options):
+    starting_rank -= 1
+    if starting_rank < 0:
+      starting_rank = 0
+
+    ending_rank -= 1
+    if ending_rank > self.total_members_in(leaderboard_name):
+      ending_rank = self.total_members_in(leaderboard_name) - 1
+
+    raw_leader_data = []
+    if self.order == self.DESC:
+      raw_leader_data = self.redis_connection.zrevrange(leaderboard_name, starting_rank, ending_rank, withscores = False)
+    else:
+      raw_leader_data = self.redis_connection.zrange(leaderboard_name, starting_rank, ending_rank, withscores = False)
+
+    if raw_leader_data:
+      return self. ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
+    else:
+      return []
+
   def around_me(self, member, **options):
     return self.around_me_in(self.leaderboard_name, member, **options)
   

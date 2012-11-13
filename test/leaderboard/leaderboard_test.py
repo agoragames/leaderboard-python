@@ -156,6 +156,45 @@ class LeaderboardTest(unittest.TestCase):
     len(leaders).should.be(25)
     leaders[0]['member'].should.be('member_25')
 
+  def test_members_from_score_range(self):
+    self.__rank_members_in_leaderboard(26)
+
+    members = self.leaderboard.members_from_score_range(10, 15)
+
+    member_15 = {
+      'member': 'member_15', 
+      'score': 15.0,
+      'rank': 11
+    }
+    members[0].should.eql(member_15)
+
+    member_10 = {
+      'member': 'member_10', 
+      'score': 10.0,
+      'rank': 16
+    }
+    members[5].should.eql(member_10)
+
+  def test_members_from_rank_range(self):
+    self.__rank_members_in_leaderboard(26)
+
+    members = self.leaderboard.members_from_rank_range(5, 9)
+
+    len(members).should.be(5)
+    members[0]['member'].should.eql('member_21')
+    members[0]['score'].should.be(21.0)    
+    members[4]['member'].should.eql('member_17')
+
+    members = self.leaderboard.members_from_rank_range(1, 1)
+    len(members).should.be(1)
+    members[0]['member'].should.eql('member_25')
+
+    members = self.leaderboard.members_from_rank_range(1, 26)
+    len(members).should.be(25)
+    members[0]['member'].should.eql('member_25')
+    members[0]['score'].should.be(25)
+    members[24]['member'].should.eql('member_1')
+
   def test_around_me(self):
     self.__rank_members_in_leaderboard(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 1)
 
