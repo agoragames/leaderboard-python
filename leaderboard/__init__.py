@@ -125,3 +125,66 @@ class Leaderboard(object):
 
   def change_score_for_member_in(self, leaderboard_name, member, delta):
     self.redis_connection.zincrby(leaderboard_name, member, delta)
+
+  def leaders(self, current_page, **options):
+    return self.leaders_in(self.leaderboard_name, current_page, **options)
+
+  def leaders_in(self, leaderboard_name, current_page, **options):
+    if current_page < 1:
+      current_page = 1
+
+    page_size = options.get('page_size', self.page_size)
+    total_pages = self.total_pages(page_size = page_size)
+
+    index_for_redis = current_page - 1
+
+    starting_offset = (index_for_redis * page_size)
+    if starting_offset < 0:
+      starting_offset = 0
+
+    ending_offset = (starting_offset + page_size) - 1
+
+    raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
+    if raw_leader_data:
+      return self.ranked_in_list_in(self.leaderboard_name, raw_leader_data, **options)
+    else:
+      return None
+
+  def ranked_in_list(self, members, **options):
+    return self.ranked_in_list_in(self.leaderboard_name, members, **options)
+
+  def ranked_in_list_in(self, leaderboard_name, members, **options):
+    ranks_for_members = []
+
+    pipeline = self.redis_connection.pipeline()    
+    
+    for member in members:
+      if self.order == self.ASC:
+        pipeline.zrank(leaderboard_name, member)
+      else:
+        pipeline.zrevrank(leaderboard_name, member)
+
+      pipeline.zscore(leaderboard_name, member)
+
+    responses = pipeline.execute()
+
+    for index, member in enumerate(members):
+      data = {}
+      data['member'] = member
+      data['rank'] = responses[index * 2] + 1
+      data['score'] = float(responses[index * 2 + 1])
+
+      # support for optional member data
+
+      ranks_for_members.append(data)
+
+    # support for sort_by in options
+
+    return ranks_for_members
+
+  def _range_method(self, connection, *args, **kwargs):
+    if self.order == self.DESC:
+      return connection.zrevrange(*args, **kwargs)
+    else:
+      return connection.zrange(*args, **kwargs)
+

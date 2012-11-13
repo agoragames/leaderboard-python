@@ -71,6 +71,30 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.rank_for('member_1').should.be(1)
     self.leaderboard.score_for('member_1').should.be(99.0)
 
+  def test_leaders(self):
+    self.__rank_members_in_leaderboard(27)
+    leaders = self.leaderboard.leaders(1)
+    len(leaders).should.be(25)
+    leaders[0]['member'].should.be('member_26')
+    leaders[0]['rank'].should.be(1)
+    leaders[24]['member'].should.be('member_2')
+
+    leaders = self.leaderboard.leaders(2)
+    len(leaders).should.be(1)
+    leaders[0]['member'].should.be('member_1')
+    leaders[0]['rank'].should.be(26)
+
+    leaders = self.leaderboard.leaders(1, page_size = 5)
+    len(leaders).should.be(5)
+
+  def test_ranked_in_list(self):
+    self.__rank_members_in_leaderboard(27)
+    leaders = self.leaderboard.ranked_in_list(['member_1', 'member_15', 'member_25'])
+    len(leaders).should.be(3)
+    leaders[0]['member'].should.be('member_1')
+    leaders[1]['member'].should.be('member_15')
+    leaders[2]['member'].should.be('member_25')
+
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })
