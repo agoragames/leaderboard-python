@@ -43,6 +43,16 @@ class LeaderboardTest(unittest.TestCase):
     self.__rank_members_in_leaderboard()
     self.leaderboard.member_data_for('member_1').should.eql(str({'member_name': 'Leaderboard member 1'}))
 
+  def test_update_member_data(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.update_member_data('member_1', {'member_name': 'Updated Leaderboard member 1'})
+    self.leaderboard.member_data_for('member_1').should.eql(str({'member_name': 'Updated Leaderboard member 1'}))
+
+  def test_remove_member_data(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.remove_member_data('member_1')
+    self.leaderboard.member_data_for('member_1').should.be(None)
+
   def test_total_members(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.total_members().should.be(5)

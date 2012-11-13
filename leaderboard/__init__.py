@@ -66,6 +66,7 @@ class Leaderboard(object):
   def delete_leaderboard_named(self, leaderboard_name):
     pipeline = self.redis_connection.pipeline()
     pipeline.delete(leaderboard_name)
+    pipeline.delete(self._member_data_key(leaderboard_name))
     pipeline.execute()
 
   def rank_member(self, member, score, member_data = None):
@@ -83,6 +84,18 @@ class Leaderboard(object):
 
   def member_data_for_in(self, leaderboard_name, member):
     return self.redis_connection.hget(self._member_data_key(leaderboard_name), member)
+
+  def update_member_data(self, member, member_data):
+    self.update_member_data_in(self.leaderboard_name, member, member_data)
+
+  def update_member_data_in(self, leaderboard_name, member, member_data):
+    self.redis_connection.hset(self._member_data_key(leaderboard_name), member, member_data)
+
+  def remove_member_data(self, member):
+    self.remove_member_data_in(self.leaderboard_name, member)
+
+  def remove_member_data_in(self, leaderboard_name, member):
+    self.redis_connection.hdel(self._member_data_key(leaderboard_name), member)
 
   def total_members(self):
     return self.total_members_in(self.leaderboard_name)
