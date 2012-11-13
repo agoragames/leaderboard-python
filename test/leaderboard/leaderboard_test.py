@@ -61,6 +61,11 @@ class LeaderboardTest(unittest.TestCase):
     self.__rank_members_in_leaderboard()
     self.leaderboard.score_for('member_5').should.be(5.0)
 
+  def test_check_member(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.check_member('member_3').should.be.true
+    self.leaderboard.check_member('member_6').should.be.false
+
   def test_rank_for(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.rank_for('member_5').should.be(1)

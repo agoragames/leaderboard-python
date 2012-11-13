@@ -105,6 +105,12 @@ class Leaderboard(object):
   def total_members_in_score_range_in(self, leaderboard_name, min_score, max_score):
     return self.redis_connection.zcount(leaderboard_name, min_score, max_score)
 
+  def check_member(self, member):
+    return self.check_member_in(self.leaderboard_name, member)
+
+  def check_member_in(self, leaderboard_name, member):
+    return self.redis_connection.zscore(leaderboard_name, member) is not None
+
   def rank_for(self, member):
     return self.rank_for_in(self.leaderboard_name, member)
 
