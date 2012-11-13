@@ -57,7 +57,20 @@ class LeaderboardTest(unittest.TestCase):
     self.__rank_members_in_leaderboard()
     self.leaderboard.total_members_in_score_range(2, 4).should.be(3)
 
+  def test_score_for(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.score_for('member_5').should.be(5.0)
 
-  def __rank_members_in_leaderboard(self, members_to_add = 5):
+  def test_rank_for(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.rank_for('member_5').should.be(1)
+
+  def test_change_score_for(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.change_score_for('member_1', 99)
+    self.leaderboard.rank_for('member_1').should.be(1)
+    self.leaderboard.score_for('member_1').should.be(99.0)
+
+  def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })

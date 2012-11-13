@@ -104,3 +104,24 @@ class Leaderboard(object):
 
   def total_members_in_score_range_in(self, leaderboard_name, min_score, max_score):
     return self.redis_connection.zcount(leaderboard_name, min_score, max_score)
+
+  def rank_for(self, member):
+    return self.rank_for_in(self.leaderboard_name, member)
+
+  def rank_for_in(self, leaderboard_name, member):
+    if self.order == self.ASC:
+      return self.redis_connection.zrank(leaderboard_name, member) + 1
+    else:
+      return self.redis_connection.zrevrank(leaderboard_name, member) + 1
+
+  def score_for(self, member):
+    self.score_for_in(self.leaderboard_name, member)
+
+  def score_for_in(self, leaderboard_name, member):
+    return float(self.redis_connection.zscore(leaderboard_name, member))
+
+  def change_score_for(self, member, delta):
+    self.change_score_for_member_in(self.leaderboard_name, member, delta)
+
+  def change_score_for_member_in(self, leaderboard_name, member, delta):
+    self.redis_connection.zincrby(leaderboard_name, member, delta)
