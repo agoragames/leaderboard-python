@@ -161,6 +161,34 @@ class Leaderboard(object):
     else:
       return []
 
+  def around_me(self, member, **options):
+    return self.around_me_in(self.leaderboard_name, member, **options)
+  
+  def around_me_in(self, leaderboard_name, member, **options):
+    reverse_rank_for_member = None
+    if self.order == self.DESC:
+      reverse_rank_for_member = self.redis_connection.zrevrank(leaderboard_name, member)
+    else:
+      reverse_rank_for_member = self.redis_connection.zrank(leaderboard_name, member)
+
+    if reverse_rank_for_member == None:
+      return []
+
+    page_size = options.get('page_size', self.page_size)
+
+    starting_offset = reverse_rank_for_member - (page_size / 2)
+    if starting_offset < 0:
+      starting_offset = 0
+
+    ending_offset = (starting_offset + page_size) - 1
+
+    raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
+
+    if raw_leader_data:
+      return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
+    else:
+      return []
+
   def ranked_in_list(self, members, **options):
     return self.ranked_in_list_in(self.leaderboard_name, members, **options)
 

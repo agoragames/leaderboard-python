@@ -101,6 +101,21 @@ class LeaderboardTest(unittest.TestCase):
     len(leaders).should.be(25)
     leaders[0]['member'].should.be('member_25')
 
+  def test_around_me(self):
+    self.__rank_members_in_leaderboard(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 1)
+
+    self.leaderboard.total_members().should.be(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 1)
+
+    leaders_around_me = self.leaderboard.around_me('member_30')
+    (len(leaders_around_me) / 2).should.be(self.leaderboard.page_size / 2)
+
+    leaders_around_me = self.leaderboard.around_me('member_1')
+    len(leaders_around_me).should.be(self.leaderboard.page_size / 2 + 1)
+
+    leaders_around_me = self.leaderboard.around_me('member_76')
+    (len(leaders_around_me) / 2).should.be(self.leaderboard.page_size / 2)
+
+
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })
