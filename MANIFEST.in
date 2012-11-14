@@ -1,0 +1,7 @@
+include *.txt
+include *.md
+include *.pip
+include README.rst
+include MANIFEST.in
+recursive-include leaderboard/ *.py
+prune *.pyc
