@@ -253,6 +253,41 @@ class LeaderboardTest(unittest.TestCase):
     leaders_around_me = self.leaderboard.around_me('member_76')
     (len(leaders_around_me) / 2).should.be(self.leaderboard.page_size / 2)
 
+  def test_merge_leaderboards(self):
+    foo_leaderboard = Leaderboard('foo')
+    bar_leaderboard = Leaderboard('bar')
+
+    foo_leaderboard.rank_member('foo_1', 1)
+    foo_leaderboard.rank_member('foo_2', 2)
+    bar_leaderboard.rank_member('bar_1', 1)
+    bar_leaderboard.rank_member('bar_2', 2)
+    bar_leaderboard.rank_member('bar_3', 5)
+
+    foo_leaderboard.merge_leaderboards('foobar', ['bar'], aggregate = 'SUM')
+
+    foobar_leaderboard = Leaderboard('foobar')
+    foobar_leaderboard.total_members().should.be(5)
+
+    foobar_leaderboard.leaders(1)[0]['member'].should.be('bar_3')
+
+  def test_intersect_leaderboards(self):
+    foo_leaderboard = Leaderboard('foo')
+    bar_leaderboard = Leaderboard('bar')
+
+    foo_leaderboard.rank_member('foo_1', 1)
+    foo_leaderboard.rank_member('foo_2', 2)
+    foo_leaderboard.rank_member('bar_3', 6)
+    bar_leaderboard.rank_member('bar_1', 3)
+    bar_leaderboard.rank_member('foo_1', 4)
+    bar_leaderboard.rank_member('bar_3', 5)
+
+    foo_leaderboard.intersect_leaderboards('foobar', ['bar'], aggregate = 'SUM')
+
+    foobar_leaderboard = Leaderboard('foobar')
+    foobar_leaderboard.total_members().should.be(2)
+
+    foobar_leaderboard.leaders(1)[0]['member'].should.be('bar_3')
+  
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })

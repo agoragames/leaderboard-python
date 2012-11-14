@@ -667,6 +667,26 @@ class Leaderboard(object):
 
     return ranks_for_members
 
+  def merge_leaderboards(self, destination, keys, aggregate = 'SUM'):
+    '''
+    Merge leaderboards given by keys with this leaderboard into a named destination leaderboard.
+    @param destination [String] Destination leaderboard name.
+    @param keys [Array] Leaderboards to be merged with the current leaderboard.
+    @param options [Hash] Options for merging the leaderboards.
+    '''
+    keys.insert(0, self.leaderboard_name)
+    self.redis_connection.zunionstore(destination, keys, aggregate)  
+
+  def intersect_leaderboards(self, destination, keys, aggregate = 'SUM'):
+    '''
+    Intersect leaderboards given by keys with this leaderboard into a named destination leaderboard.
+    @param destination [String] Destination leaderboard name.
+    @param keys [Array] Leaderboards to be merged with the current leaderboard.
+    @param options [Hash] Options for intersecting the leaderboards.
+    '''
+    keys.insert(0, self.leaderboard_name)
+    self.redis_connection.zinterstore(destination, keys, aggregate)
+
   def _range_method(self, connection, *args, **kwargs):
     if self.order == self.DESC:
       return connection.zrevrange(*args, **kwargs)
