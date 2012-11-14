@@ -16,7 +16,7 @@ setup(
   install_requires = requirements,
   url = 'https://github.com/agoragames/leaderboard-python',
   license = "LICENSE.txt",
-  description = 'Leaderboards backed by Redis',
+  description = 'Leaderboards backed by Redis in Python',
   long_description = open('README.md').read(),
   keywords = ['python', 'redis', 'leaderboard'],
   classifiers = [
