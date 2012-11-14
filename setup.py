@@ -20,7 +20,7 @@ setup(
   long_description = open('README.md').read(),
   keywords = ['python', 'redis', 'leaderboard'],
   classifiers = [
-    'Development Status :: 1 - Production',
+    'Development Status :: 5 - Production/Stable',
     'License :: OSI Approved :: MIT License',
     "Intended Audience :: Developers",
     "Operating System :: POSIX",
