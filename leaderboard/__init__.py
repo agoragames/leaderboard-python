@@ -198,7 +198,7 @@ class Leaderboard(object):
     if page_size is None:
       page_size = self.page_size
 
-    return math.ceil(self.total_members_in(leaderboard_name) / float(page_size))
+    return int(math.ceil(self.total_members_in(leaderboard_name) / float(page_size)))
 
   def total_members_in_score_range(self, min_score, max_score):
     '''
@@ -262,7 +262,7 @@ class Leaderboard(object):
     @param member Member name.
     @return the score for a member in the leaderboard.
     '''
-    self.score_for_in(self.leaderboard_name, member)
+    return self.score_for_in(self.leaderboard_name, member)
 
   def score_for_in(self, leaderboard_name, member):
     '''
