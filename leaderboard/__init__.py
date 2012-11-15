@@ -3,7 +3,7 @@ from copy import deepcopy
 import math
 
 class Leaderboard(object):
-  VERSION = "2.0.0"
+  VERSION = '2.0.1'
   DEFAULT_PAGE_SIZE = 25
   DEFAULT_REDIS_HOST = 'localhost'
   DEFAULT_REDIS_PORT = 6379
@@ -273,7 +273,7 @@ class Leaderboard(object):
     '''
     return float(self.redis_connection.zscore(leaderboard_name, member))
 
-  def score_and_rank_for(self, member, use_zero_index_for_rank = False, **options):
+  def score_and_rank_for(self, member):
     '''
     Retrieve the score and rank for a member in the leaderboard.
     @param member [String] Member name.
