@@ -3,7 +3,7 @@ from copy import deepcopy
 import math
 
 class Leaderboard(object):
-  VERSION = '2.0.1'
+  VERSION = '2.1'
   DEFAULT_PAGE_SIZE = 25
   DEFAULT_REDIS_HOST = 'localhost'
   DEFAULT_REDIS_PORT = 6379
@@ -252,15 +252,21 @@ class Leaderboard(object):
     @return the rank for a member in the leaderboard.
     '''
     if self.order == self.ASC:
-      return self.redis_connection.zrank(leaderboard_name, member) + 1
+      try:
+        return self.redis_connection.zrank(leaderboard_name, member) + 1
+      except:
+        return None
     else:
-      return self.redis_connection.zrevrank(leaderboard_name, member) + 1
+      try:
+        return self.redis_connection.zrevrank(leaderboard_name, member) + 1
+      except:
+        return None
 
   def score_for(self, member):
     '''
     Retrieve the score for a member in the leaderboard.
     @param member Member name.
-    @return the score for a member in the leaderboard.
+    @return the score for a member in the leaderboard or +None+ if the member is not in the leaderboard.
     '''
     return self.score_for_in(self.leaderboard_name, member)
 
@@ -269,9 +275,13 @@ class Leaderboard(object):
     Retrieve the score for a member in the named leaderboard.
     @param leaderboard_name Name of the leaderboard.
     @param member [String] Member name.
-    @return the score for a member in the leaderboard.
+    @return the score for a member in the leaderboard or +None+ if the member is not in the leaderboard.
     '''
-    return float(self.redis_connection.zscore(leaderboard_name, member))
+    score = self.redis_connection.zscore(leaderboard_name, member)
+    if score is not None:
+      score = float(score)
+
+    return score
 
   def score_and_rank_for(self, member):
     '''
@@ -651,8 +661,14 @@ class Leaderboard(object):
     for index, member in enumerate(members):
       data = {}
       data['member'] = member
-      data['rank'] = responses[index * 2] + 1
-      data['score'] = float(responses[index * 2 + 1])
+      rank = responses[index * 2]
+      if rank is not None:
+        rank += 1
+      data['rank'] = rank
+      score = responses[index * 2 + 1]
+      if score is not None:
+        score = float(score)
+      data['score'] = score
 
       if ('with_member_data' in options) and (True == options['with_member_data']):
         data['member_data'] = self.member_data_for_in(leaderboard_name, member)

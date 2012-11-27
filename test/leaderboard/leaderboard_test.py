@@ -12,7 +12,7 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.redis_connection.flushdb()
 
   def test_version(self):
-    Leaderboard.VERSION.should.equal('2.0.1')
+    Leaderboard.VERSION.should.equal('2.1')
 
   def test_init_with_defaults(self):
     'name'.should.equal(self.leaderboard.leaderboard_name)
@@ -75,6 +75,7 @@ class LeaderboardTest(unittest.TestCase):
   def test_score_for(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.score_for('member_5').should.be(5.0)
+    self.leaderboard.score_for('jones').should.be(None)
 
   def test_check_member(self):
     self.__rank_members_in_leaderboard()
@@ -97,6 +98,11 @@ class LeaderboardTest(unittest.TestCase):
     score_and_rank['member'].should.be('member_3')
     score_and_rank['score'].should.be(3.0)
     score_and_rank['rank'].should.be(3)
+
+    score_and_rank = self.leaderboard.score_and_rank_for('jones')
+    score_and_rank['member'].should.be('jones')
+    score_and_rank['score'].should.be(None)
+    score_and_rank['rank'].should.be(None)
 
   def test_remove_members_in_score_range(self):
     self.__rank_members_in_leaderboard()
@@ -184,6 +190,14 @@ class LeaderboardTest(unittest.TestCase):
     leaders[0]['member'].should.be('member_1')
     leaders[1]['member'].should.be('member_15')
     leaders[2]['member'].should.be('member_25')
+
+  def test_ranked_in_list_with_unknown_member(self):
+    self.__rank_members_in_leaderboard(27)
+    leaders = self.leaderboard.ranked_in_list(['jones'])
+    len(leaders).should.be(1)
+    leaders[0]['member'].should.be('jones')
+    leaders[0]['score'].should.be(None)
+    leaders[0]['rank'].should.be(None)
 
   def test_all_leaders(self):
     self.__rank_members_in_leaderboard(26)
