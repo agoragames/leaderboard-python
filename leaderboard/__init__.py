@@ -99,6 +99,44 @@ class Leaderboard(object):
       pipeline.hset(self._member_data_key(leaderboard_name), member, member_data)
     pipeline.execute()
 
+  def rank_member_if(self, rank_conditional, member, score, member_data = None):
+    '''
+    Rank a member in the leaderboard based on execution of the +rank_conditional+. 
+    The +rank_conditional+ is passed the following parameters:
+      member: Member name.
+      current_score: Current score for the member in the leaderboard.
+      score: Member score.
+      member_data: Optional member data.
+      leaderboard_options: Leaderboard options, e.g. 'reverse': Value of reverse option
+    @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
+    @param member [String] Member name.
+    @param score [String] Member score.
+    @param member_data [Hash] Optional member_data.
+    '''
+    self.rank_member_if_in(self.leaderboard_name, rank_conditional, member, score, member_data)
+
+  def rank_member_if_in(self, leaderboard_name, rank_conditional, member, score, member_data = None):
+    '''
+    Rank a member in the named leaderboard based on execution of the +rank_conditional+. 
+    The +rank_conditional+ is passed the following parameters:
+      member: Member name.
+      current_score: Current score for the member in the leaderboard.
+      score: Member score.
+      member_data: Optional member data.
+      leaderboard_options: Leaderboard options, e.g. 'reverse': Value of reverse option
+    @param leaderboard_name [String] Name of the leaderboard.
+    @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
+    @param member [String] Member name.
+    @param score [String] Member score.
+    @param member_data [Hash] Optional member_data.
+    '''
+    current_score = self.redis_connection.zscore(leaderboard_name, member)
+    if current_score is not None:
+      current_score = float(current_score)
+
+    if rank_conditional(self, member, current_score, score, member_data, {'reverse': self.order}):
+      self.rank_member_in(leaderboard_name, member, score, member_data)
+
   def member_data_for(self, member):
     '''
     Retrieve the optional member data for a given member in the leaderboard.

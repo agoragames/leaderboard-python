@@ -121,6 +121,40 @@ highscore_lb.members_from_rank_range(1, 5)
 [{'member': 'member_95', 'score': 95.0, 'rank': 1}, {'member': 'member_94', 'score': 94.0, 'rank': 2}, {'member': 'member_93', 'score': 93.0, 'rank': 3}, {'member': 'member_92', 'score': 92.0, 'rank': 4}, {'member': 'member_91', 'score': 91.0, 'rank': 5}]
 ```
 
+### Conditionally rank a member in the leaderboard
+
+You can pass a function to the `rank_member_if` method to conditionally rank a member in the leaderboard. The function is passed the following 5 parameters:
+
+* `member`: Member name.
+* `current_score`: Current score for the member in the leaderboard. May be `nil` if the member is not currently ranked in the leaderboard.
+* `score`: Member score.
+* `member_data`: Optional member data.
+* `leaderboard_options`: Leaderboard options, e.g. 'reverse': Value of reverse option
+
+```python
+def highscore_check(self, member, current_score, score, member_data, leaderboard_options):
+  if (current_score is None):
+    return True
+  if (score > current_score):
+    return True
+  return False
+
+highscore_lb.rank_member_if(highscore_check, 'david', 1337)
+highscore_lb.score_for('david')
+
+1337.0
+
+highscore_lb.rank_member_if(highscore_check, 'david', 1336)
+highscore_lb.score_for('david')
+
+1337.0
+
+highscore_lb.rank_member_if(highscore_check, 'david', 1338)
+highscore_lb.score_for('david')
+
+1338.0
+```
+
 ## Performance Metrics
 
 You can view [performance metrics](https://github.com/agoragames/leaderboard#performance-metrics) for the 

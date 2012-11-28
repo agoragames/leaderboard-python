@@ -301,6 +301,23 @@ class LeaderboardTest(unittest.TestCase):
     foobar_leaderboard.total_members().should.be(2)
 
     foobar_leaderboard.leaders(1)[0]['member'].should.be('bar_3')
+
+  def test_rank_member_if(self):
+    def highscore_check(self, member, current_score, score, member_data, leaderboard_options):
+      if (current_score is None):
+        return True
+      if (score > current_score):
+        return True
+      return False
+
+    self.leaderboard.total_members().should.be(0)
+    self.leaderboard.rank_member_if(highscore_check, 'david', 1337)
+    self.leaderboard.total_members().should.be(1)
+    self.leaderboard.score_for('david').should.be(1337.0)
+    self.leaderboard.rank_member_if(highscore_check, 'david', 1336)
+    self.leaderboard.score_for('david').should.be(1337.0)
+    self.leaderboard.rank_member_if(highscore_check, 'david', 1338)
+    self.leaderboard.score_for('david').should.be(1338.0)
   
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
