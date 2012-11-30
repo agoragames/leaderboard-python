@@ -1,6 +1,12 @@
 from redis import Redis, ConnectionPool
 from copy import deepcopy
 import math
+from itertools import izip_longest
+
+def grouper(n, iterable, fillvalue=None):
+  "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
+  args = [iter(iterable)] * n
+  return izip_longest(fillvalue=fillvalue, *args)
 
 class Leaderboard(object):
   VERSION = '2.1'
@@ -88,7 +94,7 @@ class Leaderboard(object):
   def rank_member_in(self, leaderboard_name, member, score, member_data = None):
     '''
     Rank a member in the named leaderboard.
-    @param leaderboard_name [String] Name of the leaderboa
+    @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
     @param member_data [Hash] Optional member data.
@@ -136,6 +142,24 @@ class Leaderboard(object):
 
     if rank_conditional(self, member, current_score, score, member_data, {'reverse': self.order}):
       self.rank_member_in(leaderboard_name, member, score, member_data)
+
+  def rank_members(self, members_and_scores):
+    '''
+    Rank an array of members in the leaderboard.
+    @param members_and_scores [Array] Variable list of members and scores.
+    '''
+    self.rank_members_in(self.leaderboard_name, members_and_scores)
+
+  def rank_members_in(self, leaderboard_name, members_and_scores):
+    '''
+    Rank an array of members in the named leaderboard.
+    @param leaderboard_name [String] Name of the leaderboard.
+    @param members_and_scores [Array] Variable list of members and scores.
+    '''
+    pipeline = self.redis_connection.pipeline()
+    for member, score in grouper(2, members_and_scores):
+      pipeline.zadd(leaderboard_name, member, score)
+    pipeline.execute()
 
   def member_data_for(self, member):
     '''

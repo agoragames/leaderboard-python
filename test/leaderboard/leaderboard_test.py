@@ -318,6 +318,11 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.score_for('david').should.be(1337.0)
     self.leaderboard.rank_member_if(highscore_check, 'david', 1338)
     self.leaderboard.score_for('david').should.be(1338.0)
+
+  def test_rank_members(self):
+    self.leaderboard.total_members().should.be(0)
+    self.leaderboard.rank_members(['member_1', 1000, 'member_2', 3000])
+    self.leaderboard.total_members().should.be(2)
   
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
