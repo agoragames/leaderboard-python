@@ -1,6 +1,12 @@
 from redis import Redis, ConnectionPool
 from copy import deepcopy
 import math
+from itertools import izip_longest
+
+def grouper(n, iterable, fillvalue=None):
+  "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
+  args = [iter(iterable)] * n
+  return izip_longest(fillvalue=fillvalue, *args)
 
 class Leaderboard(object):
   VERSION = '2.1'
@@ -88,7 +94,7 @@ class Leaderboard(object):
   def rank_member_in(self, leaderboard_name, member, score, member_data = None):
     '''
     Rank a member in the named leaderboard.
-    @param leaderboard_name [String] Name of the leaderboa
+    @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
     @param member_data [Hash] Optional member data.
@@ -97,6 +103,62 @@ class Leaderboard(object):
     pipeline.zadd(leaderboard_name, member, score)
     if member_data:
       pipeline.hset(self._member_data_key(leaderboard_name), member, member_data)
+    pipeline.execute()
+
+  def rank_member_if(self, rank_conditional, member, score, member_data = None):
+    '''
+    Rank a member in the leaderboard based on execution of the +rank_conditional+. 
+    The +rank_conditional+ is passed the following parameters:
+      member: Member name.
+      current_score: Current score for the member in the leaderboard.
+      score: Member score.
+      member_data: Optional member data.
+      leaderboard_options: Leaderboard options, e.g. 'reverse': Value of reverse option
+    @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
+    @param member [String] Member name.
+    @param score [String] Member score.
+    @param member_data [Hash] Optional member_data.
+    '''
+    self.rank_member_if_in(self.leaderboard_name, rank_conditional, member, score, member_data)
+
+  def rank_member_if_in(self, leaderboard_name, rank_conditional, member, score, member_data = None):
+    '''
+    Rank a member in the named leaderboard based on execution of the +rank_conditional+. 
+    The +rank_conditional+ is passed the following parameters:
+      member: Member name.
+      current_score: Current score for the member in the leaderboard.
+      score: Member score.
+      member_data: Optional member data.
+      leaderboard_options: Leaderboard options, e.g. 'reverse': Value of reverse option
+    @param leaderboard_name [String] Name of the leaderboard.
+    @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
+    @param member [String] Member name.
+    @param score [String] Member score.
+    @param member_data [Hash] Optional member_data.
+    '''
+    current_score = self.redis_connection.zscore(leaderboard_name, member)
+    if current_score is not None:
+      current_score = float(current_score)
+
+    if rank_conditional(self, member, current_score, score, member_data, {'reverse': self.order}):
+      self.rank_member_in(leaderboard_name, member, score, member_data)
+
+  def rank_members(self, members_and_scores):
+    '''
+    Rank an array of members in the leaderboard.
+    @param members_and_scores [Array] Variable list of members and scores.
+    '''
+    self.rank_members_in(self.leaderboard_name, members_and_scores)
+
+  def rank_members_in(self, leaderboard_name, members_and_scores):
+    '''
+    Rank an array of members in the named leaderboard.
+    @param leaderboard_name [String] Name of the leaderboard.
+    @param members_and_scores [Array] Variable list of members and scores.
+    '''
+    pipeline = self.redis_connection.pipeline()
+    for member, score in grouper(2, members_and_scores):
+      pipeline.zadd(leaderboard_name, member, score)
     pipeline.execute()
 
   def member_data_for(self, member):
