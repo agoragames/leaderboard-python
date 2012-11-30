@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.2 (2012-12-03)
+## 2.2.0 (2012-12-03)
 
 * Added `rank_member_if` and `rank_member_if_in` methods that allow you to rank a member in the leaderboard based on execution of a function. 
 * Added `rank_members` and `rank_members_in` methods that allow you to rank multiple members in a leaderboard at once by passing in an array of members and scores.
