@@ -12,7 +12,7 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.redis_connection.flushdb()
 
   def test_version(self):
-    Leaderboard.VERSION.should.equal('2.2.0')
+    Leaderboard.VERSION.should.equal('2.2.1')
 
   def test_init_with_defaults(self):
     'name'.should.equal(self.leaderboard.leaderboard_name)
@@ -61,6 +61,16 @@ class LeaderboardTest(unittest.TestCase):
     self.__rank_members_in_leaderboard()
     self.leaderboard.total_members().should.be(5)
     self.leaderboard.remove_member('member_1')
+    self.leaderboard.total_members().should.be(4)
+
+  def test_remove_member_also_removes_member_data(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.redis_connection.exists("name:member_data").should.be.true
+    len(self.leaderboard.redis_connection.hgetall("name:member_data")).should.be(5)
+    self.leaderboard.total_members().should.be(5)
+    self.leaderboard.remove_member('member_1')
+    self.leaderboard.redis_connection.exists("name:member_data").should.be.true
+    len(self.leaderboard.redis_connection.hgetall("name:member_data")).should.be(4)
     self.leaderboard.total_members().should.be(4)
 
   def test_total_pages(self):

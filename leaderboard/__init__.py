@@ -9,7 +9,7 @@ def grouper(n, iterable, fillvalue=None):
   return izip_longest(fillvalue=fillvalue, *args)
 
 class Leaderboard(object):
-  VERSION = '2.2.0'
+  VERSION = '2.2.1'
   DEFAULT_PAGE_SIZE = 25
   DEFAULT_REDIS_HOST = 'localhost'
   DEFAULT_REDIS_PORT = 6379
@@ -240,6 +240,7 @@ class Leaderboard(object):
     '''
     pipeline = self.redis_connection.pipeline()
     pipeline.zrem(leaderboard_name, member)
+    pipeline.hdel(self._member_data_key(leaderboard_name), member)
     pipeline.execute()
 
   def total_pages(self, page_size = None):
