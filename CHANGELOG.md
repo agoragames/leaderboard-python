@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.2.1 (2012-12-19)
+
+* Updated `remove_member` to also remove the optional member data for the member being removed.
+
 ## 2.2.0 (2012-12-03)
 
 * Added `rank_member_if` and `rank_member_if_in` methods that allow you to rank a member in the leaderboard based on execution of a function. 

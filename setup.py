@@ -9,7 +9,7 @@ requirements = [req.strip() for req in open('requirements.pip')]
 
 setup(
   name = 'leaderboard',
-  version = "2.2.0",
+  version = "2.2.1",
   author = 'David Czarnecki',
   author_email = "dczarnecki@agoragames.com",
   packages = ['leaderboard'],
