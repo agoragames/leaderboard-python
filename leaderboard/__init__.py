@@ -116,7 +116,7 @@ class Leaderboard(object):
       leaderboard_options: Leaderboard options, e.g. 'reverse': Value of reverse option
     @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
     @param member [String] Member name.
-    @param score [String] Member score.
+    @param score [float] Member score.
     @param member_data [Hash] Optional member_data.
     '''
     self.rank_member_if_in(self.leaderboard_name, rank_conditional, member, score, member_data)
@@ -133,7 +133,7 @@ class Leaderboard(object):
     @param leaderboard_name [String] Name of the leaderboard.
     @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
     @param member [String] Member name.
-    @param score [String] Member score.
+    @param score [float] Member score.
     @param member_data [Hash] Optional member_data.
     '''
     current_score = self.redis_connection.zscore(leaderboard_name, member)
