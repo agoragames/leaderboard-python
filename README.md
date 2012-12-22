@@ -164,6 +164,7 @@ leaderboard library at the original Ruby library's page.
 
 The following ports have been made of the [leaderboard gem](https://github.com/agoragames/leaderboard).
 
+* CoffeeScript: https://github.com/agoragames/leaderboard-coffeescript
 * Java: https://github.com/agoragames/java-leaderboard
 * NodeJS: https://github.com/omork/node-leaderboard
 * PHP: https://github.com/agoragames/php-leaderboard
