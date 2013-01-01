@@ -182,5 +182,5 @@ The following ports have been made of the [leaderboard gem](https://github.com/a
 
 ## Copyright
 
-Copyright (c) 2011-2012 Ola Mork, David Czarnecki. See LICENSE.txt for further details.
+Copyright (c) 2011-2013 Ola Mork, David Czarnecki. See LICENSE.txt for further details.
 
