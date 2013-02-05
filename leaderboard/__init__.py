@@ -87,7 +87,7 @@ class Leaderboard(object):
     Rank a member in the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
-    @param member_data [Hash] Optional member data.
+    @param member_data [String] Optional member data.
     '''
     self.rank_member_in(self.leaderboard_name, member, score, member_data)
 
@@ -97,7 +97,7 @@ class Leaderboard(object):
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
-    @param member_data [Hash] Optional member data.
+    @param member_data [String] Optional member data.
     '''
     pipeline = self.redis_connection.pipeline()
     pipeline.zadd(leaderboard_name, member, score)
@@ -107,7 +107,7 @@ class Leaderboard(object):
 
   def rank_member_if(self, rank_conditional, member, score, member_data = None):
     '''
-    Rank a member in the leaderboard based on execution of the +rank_conditional+. 
+    Rank a member in the leaderboard based on execution of the +rank_conditional+.
     The +rank_conditional+ is passed the following parameters:
       member: Member name.
       current_score: Current score for the member in the leaderboard.
@@ -117,13 +117,13 @@ class Leaderboard(object):
     @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
-    @param member_data [Hash] Optional member_data.
+    @param member_data [String] Optional member_data.
     '''
     self.rank_member_if_in(self.leaderboard_name, rank_conditional, member, score, member_data)
 
   def rank_member_if_in(self, leaderboard_name, rank_conditional, member, score, member_data = None):
     '''
-    Rank a member in the named leaderboard based on execution of the +rank_conditional+. 
+    Rank a member in the named leaderboard based on execution of the +rank_conditional+.
     The +rank_conditional+ is passed the following parameters:
       member: Member name.
       current_score: Current score for the member in the leaderboard.
@@ -134,7 +134,7 @@ class Leaderboard(object):
     @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
-    @param member_data [Hash] Optional member_data.
+    @param member_data [String] Optional member_data.
     '''
     current_score = self.redis_connection.zscore(leaderboard_name, member)
     if current_score is not None:
@@ -165,7 +165,7 @@ class Leaderboard(object):
     '''
     Retrieve the optional member data for a given member in the leaderboard.
     @param member [String] Member name.
-    @return Hash of optional member data.
+    @return String of optional member data.
     '''
     return self.member_data_for_in(self.leaderboard_name, member)
 
@@ -174,7 +174,7 @@ class Leaderboard(object):
     Retrieve the optional member data for a given member in the named leaderboard.
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
-    @return Hash of optional member data.
+    @return String of optional member data.
     '''
     return self.redis_connection.hget(self._member_data_key(leaderboard_name), member)
 
@@ -182,7 +182,7 @@ class Leaderboard(object):
     '''
     Update the optional member data for a given member in the leaderboard.
     @param member [String] Member name.
-    @param member_data [Hash] Optional member data.
+    @param member_data [String] Optional member data.
     '''
     self.update_member_data_in(self.leaderboard_name, member, member_data)
 
@@ -191,7 +191,7 @@ class Leaderboard(object):
     Update the optional member data for a given member in the named leaderboard.
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
-    @param member_data [Hash] Optional member data.
+    @param member_data [String] Optional member data.
     '''
     self.redis_connection.hset(self._member_data_key(leaderboard_name), member, member_data)
 
@@ -409,7 +409,7 @@ class Leaderboard(object):
     @return the page where a member falls in the leaderboard.
     '''
     return self.page_for_in(self.leaderboard_name, member, page_size)
-  
+
   def page_for_in(self, leaderboard_name, member, page_size = DEFAULT_PAGE_SIZE):
     '''
     Determine the page where a member falls in the named leaderboard.
@@ -453,7 +453,7 @@ class Leaderboard(object):
 
     percentile = math.ceil((float((responses[0] - responses[1] - 1)) / float(responses[0]) * 100))
 
-    if self.order == self.ASC:      
+    if self.order == self.ASC:
       return 100 - percentile
     else:
       return percentile
@@ -657,7 +657,7 @@ class Leaderboard(object):
     @return a page of leaders from the leaderboard around a given member.
     '''
     return self.around_me_in(self.leaderboard_name, member, **options)
-  
+
   def around_me_in(self, leaderboard_name, member, **options):
     '''
     Retrieve a page of leaders from the named leaderboard around a given member.
@@ -709,8 +709,8 @@ class Leaderboard(object):
     '''
     ranks_for_members = []
 
-    pipeline = self.redis_connection.pipeline()    
-    
+    pipeline = self.redis_connection.pipeline()
+
     for member in members:
       if self.order == self.ASC:
         pipeline.zrank(leaderboard_name, member)
@@ -754,7 +754,7 @@ class Leaderboard(object):
     @param options [Hash] Options for merging the leaderboards.
     '''
     keys.insert(0, self.leaderboard_name)
-    self.redis_connection.zunionstore(destination, keys, aggregate)  
+    self.redis_connection.zunionstore(destination, keys, aggregate)
 
   def intersect_leaderboards(self, destination, keys, aggregate = 'SUM'):
     '''
