@@ -121,6 +121,12 @@ highscore_lb.members_from_rank_range(1, 5)
 [{'member': 'member_95', 'score': 95.0, 'rank': 1}, {'member': 'member_94', 'score': 94.0, 'rank': 2}, {'member': 'member_93', 'score': 93.0, 'rank': 3}, {'member': 'member_92', 'score': 92.0, 'rank': 4}, {'member': 'member_91', 'score': 91.0, 'rank': 5}]
 ```
 
+#### Optional member data notes
+
+If you use optional member data, the use of the `remove_members_in_score_range` will leave data around in the member data 
+hash. This is because the internal Redis method, `zremrangebyscore`, only returns the number of items removed. It does 
+not return the members that it removed.
+
 ### Conditionally rank a member in the leaderboard
 
 You can pass a function to the `rank_member_if` method to conditionally rank a member in the leaderboard. The function is passed the following 5 parameters:
