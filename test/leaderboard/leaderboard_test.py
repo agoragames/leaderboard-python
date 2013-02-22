@@ -12,7 +12,7 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.redis_connection.flushdb()
 
   def test_version(self):
-    Leaderboard.VERSION.should.equal('2.2.1')
+    Leaderboard.VERSION.should.equal('2.2.2')
 
   def test_init_with_defaults(self):
     'name'.should.equal(self.leaderboard.leaderboard_name)
@@ -149,11 +149,15 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.expire_leaderboard(3)
     ttl = self.leaderboard.redis_connection.ttl(self.leaderboard.leaderboard_name)
     ttl.should.be.greater_than(1)
+    ttl = self.leaderboard.redis_connection.ttl('%s:member_data' % self.leaderboard.leaderboard_name)
+    ttl.should.be.greater_than(1)
 
   def test_expire_leaderboard_at(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.expire_leaderboard_at(int(time.time() + 10))
     ttl = self.leaderboard.redis_connection.ttl(self.leaderboard.leaderboard_name)
+    ttl.should.be.lower_than(11)
+    ttl = self.leaderboard.redis_connection.ttl('%s:member_data' % self.leaderboard.leaderboard_name)
     ttl.should.be.lower_than(11)
 
   def test_leaders(self):

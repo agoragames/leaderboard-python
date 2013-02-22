@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.2.2 (2012-02-22)
+
+* Fixed a data leak in `expire_leaderboard` and `expire_leaderboard_at` to also set expiration on the member data hash.
+
 ## 2.2.1 (2012-12-19)
 
 * Updated `remove_member` to also remove the optional member data for the member being removed.
