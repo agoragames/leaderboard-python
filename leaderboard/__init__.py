@@ -9,7 +9,7 @@ def grouper(n, iterable, fillvalue=None):
   return izip_longest(fillvalue=fillvalue, *args)
 
 class Leaderboard(object):
-  VERSION = '2.2.1'
+  VERSION = '2.2.2'
   DEFAULT_PAGE_SIZE = 25
   DEFAULT_REDIS_HOST = 'localhost'
   DEFAULT_REDIS_PORT = 6379
@@ -475,7 +475,10 @@ class Leaderboard(object):
     @param leaderboard_name [String] Name of the leaderboard.
     @param seconds [int] Number of seconds after which the leaderboard will be expired.
     '''
-    self.redis_connection.expire(leaderboard_name, seconds)
+    pipeline = self.redis_connection.pipeline()
+    pipeline.expire(leaderboard_name, seconds)
+    pipeline.expire(self._member_data_key(leaderboard_name), seconds)
+    pipeline.execute()
 
   def expire_leaderboard_at(self, timestamp):
     '''
@@ -494,7 +497,10 @@ class Leaderboard(object):
     @param leaderboard_name [String] Name of the leaderboard.
     @param timestamp [int] UNIX timestamp at which the leaderboard will be expired.
     '''
-    self.redis_connection.expireat(leaderboard_name, timestamp)
+    pipeline = self.redis_connection.pipeline()
+    pipeline.expireat(leaderboard_name, timestamp)
+    pipeline.expireat(self._member_data_key(leaderboard_name), timestamp)
+    pipeline.execute()
 
   def leaders(self, current_page, **options):
     '''
