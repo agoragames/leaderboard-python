@@ -625,7 +625,7 @@ class Leaderboard(object):
       raw_leader_data = self.redis_connection.zrange(leaderboard_name, starting_rank, ending_rank, withscores = False)
 
     if raw_leader_data:
-      return self. ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
+      return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
     else:
       return []
 
