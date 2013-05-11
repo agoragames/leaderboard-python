@@ -419,10 +419,10 @@ class Leaderboard(object):
     @return the page where a member falls in the leaderboard.
     '''
     rank_for_member = None
-    if self.order == self.DESC:
+    if self.order == self.ASC:
       rank_for_member = self.redis_connection.zrank(leaderboard_name, member)
     else:
-      rank_for_memebr = self.redis_connection.zrevrank(leaderboard_name, member)
+      rank_for_member = self.redis_connection.zrevrank(leaderboard_name, member)
 
     if rank_for_member == None:
       rank_for_member = 0

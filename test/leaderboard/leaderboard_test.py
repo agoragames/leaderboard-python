@@ -121,19 +121,30 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.total_members().should.be(2)
 
   def test_page_for(self):
-    self.leaderboard.page_for('jones').should.be(0)
+    self.leaderboard.page_for('jones').should.equal(0)
 
-    self.__rank_members_in_leaderboard(20)
+    self.__rank_members_in_leaderboard(21)
 
-    self.leaderboard.page_for('member_17').should.be(1)
-    self.leaderboard.page_for('member_11').should.be(1)
-    self.leaderboard.page_for('member_10').should.be(1)
-    self.leaderboard.page_for('member_1').should.be(1)
+    self.leaderboard.page_for('member_17').should.equal(1)
+    self.leaderboard.page_for('member_11').should.equal(1)
+    self.leaderboard.page_for('member_10').should.equal(1)
+    self.leaderboard.page_for('member_1').should.equal(1)
 
-    self.leaderboard.page_for('member_17', 10).should.be(1)
-    self.leaderboard.page_for('member_11', 10).should.be(1)
-    self.leaderboard.page_for('member_10', 10).should.be(2)
-    self.leaderboard.page_for('member_1', 10).should.be(2)
+    self.leaderboard.page_for('member_17', 10).should.equal(1)
+    self.leaderboard.page_for('member_11', 10).should.equal(1)
+    self.leaderboard.page_for('member_10', 10).should.equal(2)
+    self.leaderboard.page_for('member_1', 10).should.equal(2)
+
+  def test_page_for_with_sort_option_ASC(self):
+    self.leaderboard.order = Leaderboard.ASC
+    self.leaderboard.page_for('jones').should.equal(0)
+
+    self.__rank_members_in_leaderboard(21)
+
+    self.leaderboard.page_for('member_10', 10).should.equal(1)
+    self.leaderboard.page_for('member_1', 10).should.equal(1)
+    self.leaderboard.page_for('member_17', 10).should.equal(2)
+    self.leaderboard.page_for('member_11', 10).should.equal(2)
 
   def test_percentile_for(self):
     self.__rank_members_in_leaderboard(13)
@@ -225,14 +236,14 @@ class LeaderboardTest(unittest.TestCase):
     members = self.leaderboard.members_from_score_range(10, 15)
 
     member_15 = {
-      'member': 'member_15', 
+      'member': 'member_15',
       'score': 15.0,
       'rank': 11
     }
     members[0].should.eql(member_15)
 
     member_10 = {
-      'member': 'member_10', 
+      'member': 'member_10',
       'score': 10.0,
       'rank': 16
     }
@@ -245,7 +256,7 @@ class LeaderboardTest(unittest.TestCase):
 
     len(members).should.be(5)
     members[0]['member'].should.eql('member_21')
-    members[0]['score'].should.be(21.0)    
+    members[0]['score'].should.be(21.0)
     members[4]['member'].should.eql('member_17')
 
     members = self.leaderboard.members_from_rank_range(1, 1)
@@ -266,7 +277,7 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.member_at(50)['rank'].should.be(50)
     self.leaderboard.member_at(51).should.be(None)
     self.leaderboard.member_at(1, with_member_data = True)['member_data'].should.be(str({'member_name': 'Leaderboard member 1'}))
-  
+
   def test_around_me(self):
     self.__rank_members_in_leaderboard(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 1)
 
@@ -337,7 +348,7 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.total_members().should.be(0)
     self.leaderboard.rank_members(['member_1', 1000, 'member_2', 3000])
     self.leaderboard.total_members().should.be(2)
-  
+
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })
