@@ -1,5 +1,4 @@
 from redis import Redis, ConnectionPool
-from copy import deepcopy
 import math
 from itertools import izip_longest
 
@@ -46,7 +45,7 @@ class Leaderboard(object):
     connection_pool : redis connection pool to use if creating a new handle
     '''
     self.leaderboard_name = leaderboard_name
-    self.options = deepcopy(options)
+    self.options = options
 
     self.page_size = self.options.pop('page_size', self.DEFAULT_PAGE_SIZE)
     if self.page_size < 1:
