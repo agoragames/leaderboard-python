@@ -422,7 +422,7 @@ class Leaderboard(object):
     if self.order == self.DESC:
       rank_for_member = self.redis_connection.zrank(leaderboard_name, member)
     else:
-      rank_for_memebr = self.redis_connection.zrevrank(leaderboard_name, member)
+      rank_for_member = self.redis_connection.zrevrank(leaderboard_name, member)
 
     if rank_for_member == None:
       rank_for_member = 0
