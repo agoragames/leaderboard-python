@@ -194,6 +194,11 @@ class LeaderboardTest(unittest.TestCase):
     leaders[0]['member'].should.equal('member_5')
     leaders[0]['member_data'].should.be(str({'member_name': 'Leaderboard member 5'}))
 
+  def test_leaders_return_type(self):
+    leaders = self.leaderboard.leaders(1)
+    type(leaders).should.equal(type([]))
+    leaders.should.equal([])
+
   def test_ranked_in_list_with_sort_by(self):
     self.__rank_members_in_leaderboard(26)
     leaders = self.leaderboard.ranked_in_list(['member_25', 'member_1', 'member_15'], sort_by = 'score')
