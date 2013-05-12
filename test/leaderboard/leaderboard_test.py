@@ -55,36 +55,36 @@ class LeaderboardTest(unittest.TestCase):
 
   def test_total_members(self):
     self.__rank_members_in_leaderboard()
-    self.leaderboard.total_members().should.be(5)
+    self.leaderboard.total_members().should.equal(5)
 
   def test_remove_member(self):
     self.__rank_members_in_leaderboard()
-    self.leaderboard.total_members().should.be(5)
+    self.leaderboard.total_members().should.equal(5)
     self.leaderboard.remove_member('member_1')
-    self.leaderboard.total_members().should.be(4)
+    self.leaderboard.total_members().should.equal(4)
 
   def test_remove_member_also_removes_member_data(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.redis_connection.exists("name:member_data").should.be.true
-    len(self.leaderboard.redis_connection.hgetall("name:member_data")).should.be(5)
-    self.leaderboard.total_members().should.be(5)
+    len(self.leaderboard.redis_connection.hgetall("name:member_data")).should.equal(5)
+    self.leaderboard.total_members().should.equal(5)
     self.leaderboard.remove_member('member_1')
     self.leaderboard.redis_connection.exists("name:member_data").should.be.true
-    len(self.leaderboard.redis_connection.hgetall("name:member_data")).should.be(4)
-    self.leaderboard.total_members().should.be(4)
+    len(self.leaderboard.redis_connection.hgetall("name:member_data")).should.equal(4)
+    self.leaderboard.total_members().should.equal(4)
 
   def test_total_pages(self):
-    self.__rank_members_in_leaderboard(26)
-    self.leaderboard.total_members().should.be(26)
-    self.leaderboard.total_pages().should.be(2)
+    self.__rank_members_in_leaderboard(27)
+    self.leaderboard.total_members().should.equal(26)
+    self.leaderboard.total_pages().should.equal(2)
 
   def test_total_members_in_score_range(self):
     self.__rank_members_in_leaderboard()
-    self.leaderboard.total_members_in_score_range(2, 4).should.be(3)
+    self.leaderboard.total_members_in_score_range(2, 4).should.equal(3)
 
   def test_score_for(self):
     self.__rank_members_in_leaderboard()
-    self.leaderboard.score_for('member_5').should.be(5.0)
+    self.leaderboard.score_for('member_5').should.equal(5.0)
     self.leaderboard.score_for('jones').should.be(None)
 
   def test_check_member(self):
@@ -94,31 +94,31 @@ class LeaderboardTest(unittest.TestCase):
 
   def test_rank_for(self):
     self.__rank_members_in_leaderboard()
-    self.leaderboard.rank_for('member_5').should.be(1)
+    self.leaderboard.rank_for('member_5').should.equal(1)
 
   def test_change_score_for(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.change_score_for('member_1', 99)
-    self.leaderboard.rank_for('member_1').should.be(1)
-    self.leaderboard.score_for('member_1').should.be(99.0)
+    self.leaderboard.rank_for('member_1').should.equal(1)
+    self.leaderboard.score_for('member_1').should.equal(100.0)
 
   def test_score_and_rank_for(self):
     self.__rank_members_in_leaderboard()
     score_and_rank = self.leaderboard.score_and_rank_for('member_3')
-    score_and_rank['member'].should.be('member_3')
-    score_and_rank['score'].should.be(3.0)
-    score_and_rank['rank'].should.be(3)
+    score_and_rank['member'].should.equal('member_3')
+    score_and_rank['score'].should.equal(3.0)
+    score_and_rank['rank'].should.equal(3)
 
     score_and_rank = self.leaderboard.score_and_rank_for('jones')
-    score_and_rank['member'].should.be('jones')
+    score_and_rank['member'].should.equal('jones')
     score_and_rank['score'].should.be(None)
     score_and_rank['rank'].should.be(None)
 
   def test_remove_members_in_score_range(self):
     self.__rank_members_in_leaderboard()
-    self.leaderboard.total_members().should.be(5)
+    self.leaderboard.total_members().should.equal(5)
     self.leaderboard.remove_members_in_score_range(2, 4)
-    self.leaderboard.total_members().should.be(2)
+    self.leaderboard.total_members().should.equal(2)
 
   def test_page_for(self):
     self.leaderboard.page_for('jones').should.equal(0)
@@ -174,53 +174,53 @@ class LeaderboardTest(unittest.TestCase):
   def test_leaders(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.leaders(1)
-    len(leaders).should.be(25)
-    leaders[0]['member'].should.be('member_26')
-    leaders[0]['rank'].should.be(1)
-    leaders[24]['member'].should.be('member_2')
+    len(leaders).should.equal(25)
+    leaders[0]['member'].should.equal('member_26')
+    leaders[0]['rank'].should.equal(1)
+    leaders[24]['member'].should.equal('member_2')
 
     leaders = self.leaderboard.leaders(2)
-    len(leaders).should.be(1)
-    leaders[0]['member'].should.be('member_1')
-    leaders[0]['rank'].should.be(26)
+    len(leaders).should.equal(1)
+    leaders[0]['member'].should.equal('member_1')
+    leaders[0]['rank'].should.equal(26)
 
     leaders = self.leaderboard.leaders(1, page_size = 5)
-    len(leaders).should.be(5)
+    len(leaders).should.equal(5)
 
   def test_leaders_with_optional_member_data(self):
     self.__rank_members_in_leaderboard()
     leaders = self.leaderboard.leaders(1, with_member_data = True)
-    len(leaders).should.be(5)
-    leaders[0]['member'].should.be('member_1')
-    leaders[0]['member_data'].should.be(str({'member_name': 'Leaderboard member 1'}))
+    len(leaders).should.equal(5)
+    leaders[0]['member'].should.equal('member_5')
+    leaders[0]['member_data'].should.be(str({'member_name': 'Leaderboard member 5'}))
 
   def test_ranked_in_list_with_sort_by(self):
     self.__rank_members_in_leaderboard(26)
     leaders = self.leaderboard.ranked_in_list(['member_25', 'member_1', 'member_15'], sort_by = 'score')
-    len(leaders).should.be(3)
-    leaders[0]['member'].should.be('member_1')
-    leaders[1]['member'].should.be('member_15')
-    leaders[2]['member'].should.be('member_25')
+    len(leaders).should.equal(3)
+    leaders[0]['member'].should.equal('member_1')
+    leaders[1]['member'].should.equal('member_15')
+    leaders[2]['member'].should.equal('member_25')
 
     leaders = self.leaderboard.ranked_in_list(['member_25', 'member_1', 'member_15'], sort_by = 'rank')
     len(leaders).should.be(3)
-    leaders[0]['member'].should.be('member_1')
-    leaders[1]['member'].should.be('member_15')
-    leaders[2]['member'].should.be('member_25')
+    leaders[0]['member'].should.equal('member_25')
+    leaders[1]['member'].should.equal('member_15')
+    leaders[2]['member'].should.equal('member_1')
 
   def test_ranked_in_list(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.ranked_in_list(['member_1', 'member_15', 'member_25'])
     len(leaders).should.be(3)
-    leaders[0]['member'].should.be('member_1')
-    leaders[1]['member'].should.be('member_15')
-    leaders[2]['member'].should.be('member_25')
+    leaders[0]['member'].should.equal('member_1')
+    leaders[1]['member'].should.equal('member_15')
+    leaders[2]['member'].should.equal('member_25')
 
   def test_ranked_in_list_with_unknown_member(self):
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.ranked_in_list(['jones'])
     len(leaders).should.be(1)
-    leaders[0]['member'].should.be('jones')
+    leaders[0]['member'].should.equal('jones')
     leaders[0]['score'].should.be(None)
     leaders[0]['rank'].should.be(None)
 
@@ -228,7 +228,7 @@ class LeaderboardTest(unittest.TestCase):
     self.__rank_members_in_leaderboard(26)
     leaders = self.leaderboard.all_leaders()
     len(leaders).should.be(25)
-    leaders[0]['member'].should.be('member_25')
+    leaders[0]['member'].should.equal('member_25')
 
   def test_members_from_score_range(self):
     self.__rank_members_in_leaderboard(26)
@@ -256,41 +256,41 @@ class LeaderboardTest(unittest.TestCase):
 
     len(members).should.be(5)
     members[0]['member'].should.eql('member_21')
-    members[0]['score'].should.be(21.0)
+    members[0]['score'].should.equal(21.0)
     members[4]['member'].should.eql('member_17')
 
     members = self.leaderboard.members_from_rank_range(1, 1)
-    len(members).should.be(1)
+    len(members).should.equal(1)
     members[0]['member'].should.eql('member_25')
 
     members = self.leaderboard.members_from_rank_range(1, 26)
-    len(members).should.be(25)
+    len(members).should.equal(25)
     members[0]['member'].should.eql('member_25')
-    members[0]['score'].should.be(25)
+    members[0]['score'].should.equal(25)
     members[24]['member'].should.eql('member_1')
 
   def test_member_at(self):
     self.__rank_members_in_leaderboard(51)
-    self.leaderboard.member_at(1)['rank'].should.be(1)
-    self.leaderboard.member_at(1)['score'].should.be(50.0)
-    self.leaderboard.member_at(26)['rank'].should.be(26)
-    self.leaderboard.member_at(50)['rank'].should.be(50)
-    self.leaderboard.member_at(51).should.be(None)
-    self.leaderboard.member_at(1, with_member_data = True)['member_data'].should.be(str({'member_name': 'Leaderboard member 1'}))
+    self.leaderboard.member_at(1)['rank'].should.equal(1)
+    self.leaderboard.member_at(1)['score'].should.equal(50.0)
+    self.leaderboard.member_at(26)['rank'].should.equal(26)
+    self.leaderboard.member_at(50)['rank'].should.equal(50)
+    self.leaderboard.member_at(51).should.equal(None)
+    self.leaderboard.member_at(1, with_member_data = True)['member_data'].should.eql(str({'member_name': 'Leaderboard member 50'}))
 
   def test_around_me(self):
-    self.__rank_members_in_leaderboard(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 1)
+    self.__rank_members_in_leaderboard(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 2)
 
     self.leaderboard.total_members().should.be(Leaderboard.DEFAULT_PAGE_SIZE * 3 + 1)
 
     leaders_around_me = self.leaderboard.around_me('member_30')
-    (len(leaders_around_me) / 2).should.be(self.leaderboard.page_size / 2)
+    (len(leaders_around_me) / 2).should.equal(self.leaderboard.page_size / 2)
 
     leaders_around_me = self.leaderboard.around_me('member_1')
-    len(leaders_around_me).should.be(self.leaderboard.page_size / 2 + 1)
+    len(leaders_around_me).should.equal(self.leaderboard.page_size / 2 + 1)
 
     leaders_around_me = self.leaderboard.around_me('member_76')
-    (len(leaders_around_me) / 2).should.be(self.leaderboard.page_size / 2)
+    (len(leaders_around_me) / 2).should.equal(self.leaderboard.page_size / 2)
 
   def test_merge_leaderboards(self):
     foo_leaderboard = Leaderboard('foo')
@@ -305,9 +305,9 @@ class LeaderboardTest(unittest.TestCase):
     foo_leaderboard.merge_leaderboards('foobar', ['bar'], aggregate = 'SUM')
 
     foobar_leaderboard = Leaderboard('foobar')
-    foobar_leaderboard.total_members().should.be(5)
+    foobar_leaderboard.total_members().should.equal(5)
 
-    foobar_leaderboard.leaders(1)[0]['member'].should.be('bar_3')
+    foobar_leaderboard.leaders(1)[0]['member'].should.equal('bar_3')
 
   def test_intersect_leaderboards(self):
     foo_leaderboard = Leaderboard('foo')
@@ -323,9 +323,9 @@ class LeaderboardTest(unittest.TestCase):
     foo_leaderboard.intersect_leaderboards('foobar', ['bar'], aggregate = 'SUM')
 
     foobar_leaderboard = Leaderboard('foobar')
-    foobar_leaderboard.total_members().should.be(2)
+    foobar_leaderboard.total_members().should.equal(2)
 
-    foobar_leaderboard.leaders(1)[0]['member'].should.be('bar_3')
+    foobar_leaderboard.leaders(1)[0]['member'].should.equal('bar_3')
 
   def test_rank_member_if(self):
     def highscore_check(self, member, current_score, score, member_data, leaderboard_options):
@@ -335,19 +335,19 @@ class LeaderboardTest(unittest.TestCase):
         return True
       return False
 
-    self.leaderboard.total_members().should.be(0)
+    self.leaderboard.total_members().should.equal(0)
     self.leaderboard.rank_member_if(highscore_check, 'david', 1337)
-    self.leaderboard.total_members().should.be(1)
-    self.leaderboard.score_for('david').should.be(1337.0)
+    self.leaderboard.total_members().should.equal(1)
+    self.leaderboard.score_for('david').should.equal(1337.0)
     self.leaderboard.rank_member_if(highscore_check, 'david', 1336)
-    self.leaderboard.score_for('david').should.be(1337.0)
+    self.leaderboard.score_for('david').should.equal(1337.0)
     self.leaderboard.rank_member_if(highscore_check, 'david', 1338)
-    self.leaderboard.score_for('david').should.be(1338.0)
+    self.leaderboard.score_for('david').should.equal(1338.0)
 
   def test_rank_members(self):
-    self.leaderboard.total_members().should.be(0)
+    self.leaderboard.total_members().should.equal(0)
     self.leaderboard.rank_members(['member_1', 1000, 'member_2', 3000])
-    self.leaderboard.total_members().should.be(2)
+    self.leaderboard.total_members().should.equal(2)
 
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
