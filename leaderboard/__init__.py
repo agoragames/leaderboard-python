@@ -522,7 +522,6 @@ class Leaderboard(object):
       current_page = 1
 
     page_size = options.get('page_size', self.page_size)
-    total_pages = self.total_pages(page_size = page_size)
 
     index_for_redis = current_page - 1
 
