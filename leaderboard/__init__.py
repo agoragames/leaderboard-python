@@ -536,7 +536,7 @@ class Leaderboard(object):
     if raw_leader_data:
       return self.ranked_in_list_in(self.leaderboard_name, raw_leader_data, **options)
     else:
-      return None
+      return []
 
   def all_leaders(self, **options):
     '''
