@@ -533,6 +533,10 @@ class Leaderboard(object):
     ending_offset = (starting_offset + page_size) - 1
 
     raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
+
+    if options.pop('members_only', False):
+      return raw_leader_data
+
     if raw_leader_data:
       return self.ranked_in_list_in(self.leaderboard_name, raw_leader_data, **options)
     else:
@@ -554,6 +558,9 @@ class Leaderboard(object):
     @return the named leaderboard.
     '''
     raw_leader_data = self._range_method(self.redis_connection, leaderboard_name, 0, -1, withscores = False)
+
+    if options.pop('members_only', False):
+      return raw_leader_data
 
     if raw_leader_data:
       return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
@@ -584,6 +591,9 @@ class Leaderboard(object):
       raw_leader_data = self.redis_connection.zrevrangebyscore(leaderboard_name, maximum_score, minimum_score)
     else:
       raw_leader_data = self.redis_connection.zrangebyscore(leaderboard_name, minimum_score, maximum_score)
+
+    if options.pop('members_only', False):
+      return raw_leader_data
 
     if raw_leader_data:
       return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
@@ -622,6 +632,9 @@ class Leaderboard(object):
       raw_leader_data = self.redis_connection.zrevrange(leaderboard_name, starting_rank, ending_rank, withscores = False)
     else:
       raw_leader_data = self.redis_connection.zrange(leaderboard_name, starting_rank, ending_rank, withscores = False)
+
+    if options.pop('members_only', False):
+      return raw_leader_data
 
     if raw_leader_data:
       return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
@@ -689,6 +702,9 @@ class Leaderboard(object):
     ending_offset = (starting_offset + page_size) - 1
 
     raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
+
+    if options.pop('members_only', False):
+      return raw_leader_data
 
     if raw_leader_data:
       return self.ranked_in_list_in(leaderboard_name, raw_leader_data, **options)
