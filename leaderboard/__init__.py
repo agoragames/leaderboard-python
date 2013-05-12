@@ -521,7 +521,7 @@ class Leaderboard(object):
     if current_page < 1:
       current_page = 1
 
-    page_size = options.get('page_size', self.page_size)
+    page_size = options.pop('page_size', self.page_size)
     total_pages = self.total_pages(page_size = page_size)
 
     index_for_redis = current_page - 1
@@ -704,7 +704,7 @@ class Leaderboard(object):
     '''
     return self.ranked_in_list_in(self.leaderboard_name, members, **options)
 
-  def ranked_in_list_in(self, leaderboard_name, members, **options):
+  def ranked_in_list_in(self, leaderboard_name, members, with_member_data = False, sort_by = None):
     '''
     Retrieve a page of leaders from the named leaderboard for a given list of members.
     @param leaderboard_name [String] Name of the leaderboard.
@@ -738,16 +738,15 @@ class Leaderboard(object):
         score = float(score)
       data['score'] = score
 
-      if ('with_member_data' in options) and (True == options['with_member_data']):
+      if with_member_data:
         data['member_data'] = self.member_data_for_in(leaderboard_name, member)
 
       ranks_for_members.append(data)
 
-    if 'sort_by' in options:
-      if 'rank' == options['sort_by']:
-        ranks_for_members = sorted(ranks_for_members, key = lambda member: member['rank'])
-      elif 'score' == options['sort_by']:
-        ranks_for_members = sorted(ranks_for_members, key = lambda member: member['score'])
+    if sort_by == 'rank':
+      ranks_for_members = sorted(ranks_for_members, key = lambda member: member['rank'])
+    elif sort_by == 'score':
+      ranks_for_members = sorted(ranks_for_members, key = lambda member: member['score'])
 
     return ranks_for_members
 
