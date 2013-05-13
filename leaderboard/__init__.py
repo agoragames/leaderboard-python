@@ -1,4 +1,4 @@
-from redis import Redis, ConnectionPool
+from redis import StrictRedis, Redis, ConnectionPool
 import math
 from itertools import izip_longest
 
@@ -55,15 +55,16 @@ class Leaderboard(object):
     if not self.order in [self.ASC, self.DESC]:
       raise ValueError("%s is not one of [%s]" % (self.order,  ",".join([self.ASC, self.DESC])))
 
-    self.redis_connection = self.options.pop('connection', None)
-    if not isinstance(self.redis_connection, Redis):
-      if 'connection_pool' not in self.options:
-        self.options['connection_pool'] = self.pool(
-          self.options.pop('host', self.DEFAULT_REDIS_HOST),
-          self.options.pop('port', self.DEFAULT_REDIS_PORT),
-          self.options.pop('db', self.DEFAULT_REDIS_DB)
-        )
-      self.redis_connection = Redis(**self.options)
+    connection = self.options.pop('connection', None)
+    if isinstance(connection, (StrictRedis, Redis)):
+      self.options['connection_pool'] = connection.connection_pool
+    if 'connection_pool' not in self.options:
+      self.options['connection_pool'] = self.pool(
+        self.options.pop('host', self.DEFAULT_REDIS_HOST),
+        self.options.pop('port', self.DEFAULT_REDIS_PORT),
+        self.options.pop('db', self.DEFAULT_REDIS_DB)
+      )
+    self.redis_connection = Redis(**self.options)
 
   def delete_leaderboard(self):
     '''
