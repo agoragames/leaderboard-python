@@ -532,7 +532,7 @@ class Leaderboard(object):
     ending_offset = (starting_offset + page_size) - 1
 
     raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
-    return self._parse_raw_leaders(self.leaderboard_name, raw_leader_data, **options)
+    return self._parse_raw_members(self.leaderboard_name, raw_leader_data, **options)
 
   def all_leaders(self, **options):
     '''
@@ -550,7 +550,7 @@ class Leaderboard(object):
     @return the named leaderboard.
     '''
     raw_leader_data = self._range_method(self.redis_connection, leaderboard_name, 0, -1, withscores = False)
-    return self._parse_raw_leaders(leaderboard_name, raw_leader_data, **options)
+    return self._parse_raw_members(leaderboard_name, raw_leader_data, **options)
 
   def members_from_score_range(self, minimum_score, maximum_score, **options):
     '''
@@ -576,7 +576,7 @@ class Leaderboard(object):
       raw_leader_data = self.redis_connection.zrevrangebyscore(leaderboard_name, maximum_score, minimum_score)
     else:
       raw_leader_data = self.redis_connection.zrangebyscore(leaderboard_name, minimum_score, maximum_score)
-    return self._parse_raw_leaders(leaderboard_name, raw_leader_data, **options)
+    return self._parse_raw_members(leaderboard_name, raw_leader_data, **options)
 
   def members_from_rank_range(self, starting_rank, ending_rank, **options):
     '''
@@ -611,7 +611,7 @@ class Leaderboard(object):
     else:
       raw_leader_data = self.redis_connection.zrange(leaderboard_name, starting_rank, ending_rank, withscores = False)
 
-    return self._parse_raw_leaders(leaderboard_name, raw_leader_data, **options)
+    return self._parse_raw_members(leaderboard_name, raw_leader_data, **options)
 
   def member_at(self, position, **options):
     '''
@@ -674,7 +674,7 @@ class Leaderboard(object):
     ending_offset = (starting_offset + page_size) - 1
 
     raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
-    return self._parse_raw_leaders(leaderboard_name, raw_leader_data, **options)
+    return self._parse_raw_members(leaderboard_name, raw_leader_data, **options)
 
   def ranked_in_list(self, members, **options):
     '''
@@ -766,7 +766,7 @@ class Leaderboard(object):
     '''
     return '%s:member_data' % leaderboard_name
 
-  def _parse_raw_leaders(self, leaderboard_name, members, members_only = False, **options):
+  def _parse_raw_members(self, leaderboard_name, members, members_only = False, **options):
     '''
     Parse the raw leaders data as returned from a given leader board query. Do associative lookups with the member to rank, score and potentially sort the results.
     @param leaderboard_name [String] Name of the leaderboard.
