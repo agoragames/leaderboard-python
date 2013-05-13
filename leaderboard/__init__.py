@@ -522,7 +522,6 @@ class Leaderboard(object):
       current_page = 1
 
     page_size = options.get('page_size', self.page_size)
-    total_pages = self.total_pages(page_size = page_size)
 
     index_for_redis = current_page - 1
 
@@ -540,7 +539,7 @@ class Leaderboard(object):
     if raw_leader_data:
       return self.ranked_in_list_in(self.leaderboard_name, raw_leader_data, **options)
     else:
-      return None
+      return []
 
   def all_leaders(self, **options):
     '''
