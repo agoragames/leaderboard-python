@@ -297,6 +297,28 @@ class LeaderboardTest(unittest.TestCase):
     leaders_around_me = self.leaderboard.around_me('member_76')
     (len(leaders_around_me) / 2).should.equal(self.leaderboard.page_size / 2)
 
+  def test_members_only(self):
+    exp = ['member_%d' % x for x in reversed(range(1, 27))]
+
+    self.__rank_members_in_leaderboard(27)
+    leaders = self.leaderboard.leaders(1, members_only=True)
+    leaders.should.equal(exp[0:25])
+
+    leaders = self.leaderboard.leaders(2, members_only=True)
+    leaders.should.equal(exp[25:26])
+
+    members = self.leaderboard.all_leaders(members_only=True)
+    members.should.equal(exp)
+
+    members = self.leaderboard.members_from_score_range(10, 15, members_only=True)
+    members.should.equal(exp[11:17])
+
+    members = self.leaderboard.members_from_rank_range(5, 9, members_only=True)
+    members.should.equal(exp[4:9])
+
+    leaders_around_me = self.leaderboard.around_me('member_25', page_size=3, members_only=True)
+    leaders_around_me.should.equal(exp[0:3])
+
   def test_merge_leaderboards(self):
     foo_leaderboard = Leaderboard('foo')
     bar_leaderboard = Leaderboard('bar')
