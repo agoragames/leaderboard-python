@@ -1,4 +1,4 @@
-from redis import Redis, ConnectionPool
+from redis import Redis, StrictRedis, ConnectionPool
 from leaderboard import Leaderboard
 import unittest
 import time
@@ -32,6 +32,12 @@ class LeaderboardTest(unittest.TestCase):
 
     lb0.redis_connection.connection_pool.should.equal(lb1.redis_connection.connection_pool)
     lb0.redis_connection.connection_pool.should_not.equal(lb2.redis_connection.connection_pool)
+
+  def test_init_uses_connection(self):
+    lb = Leaderboard('lb0', connection=Redis(db=1))
+    lb.redis_connection.connection_pool.connection_kwargs['db'].should.equal(1)
+    lb = Leaderboard('lb1', connection=StrictRedis(db=1))
+    lb.redis_connection.connection_pool.connection_kwargs['db'].should.equal(1)
 
   def test_delete_leaderboard(self):
     self.__rank_members_in_leaderboard()
