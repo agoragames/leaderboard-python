@@ -304,7 +304,7 @@ class LeaderboardTest(unittest.TestCase):
     (len(leaders_around_me) / 2).should.equal(self.leaderboard.page_size / 2)
 
   def test_members_only(self):
-    exp = ['member_%d' % x for x in reversed(range(1, 27))]
+    exp = [{'member': 'member_%d' % x} for x in reversed(range(1, 27))]
 
     self.__rank_members_in_leaderboard(27)
     leaders = self.leaderboard.leaders(1, members_only=True)

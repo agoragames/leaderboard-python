@@ -777,7 +777,7 @@ class Leaderboard(object):
     @return a list of members.
     '''
     if members_only:
-      return members
+      return [{'member': m} for m in members]
 
     if members:
       return self.ranked_in_list_in(leaderboard_name, members, **options)
