@@ -12,7 +12,7 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.redis_connection.flushdb()
 
   def test_version(self):
-    Leaderboard.VERSION.should.equal('2.2.2')
+    Leaderboard.VERSION.should.equal('2.3.0')
 
   def test_init_with_defaults(self):
     'name'.should.equal(self.leaderboard.leaderboard_name)

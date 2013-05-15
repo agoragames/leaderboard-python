@@ -123,9 +123,18 @@ highscore_lb.members_from_rank_range(1, 5)
 
 #### Optional member data notes
 
-If you use optional member data, the use of the `remove_members_in_score_range` will leave data around in the member data 
-hash. This is because the internal Redis method, `zremrangebyscore`, only returns the number of items removed. It does 
+If you use optional member data, the use of the `remove_members_in_score_range` will leave data around in the member data
+hash. This is because the internal Redis method, `zremrangebyscore`, only returns the number of items removed. It does
 not return the members that it removed.
+
+#### Leaderboard request options
+
+You can pass various options to the calls `leaders`, `all_leaders`, `around_me`, `members_from_score_range`, `members_from_rank_range` and `ranked_in_list`. Valid options are:
+
+* `with_member_data` - `true` or `false` to return the optional member data.
+* `page_size` - An integer value to change the page size for that call.
+* `members_only` - `true` or `false` to return only the members without their score and rank.
+* `sort_option` - Valid values for `sort_option` are `score` and `rank`.
 
 ### Conditionally rank a member in the leaderboard
 
@@ -163,7 +172,7 @@ highscore_lb.score_for('david')
 
 ## Performance Metrics
 
-You can view [performance metrics](https://github.com/agoragames/leaderboard#performance-metrics) for the 
+You can view [performance metrics](https://github.com/agoragames/leaderboard#performance-metrics) for the
 leaderboard library at the original Ruby library's page.
 
 ## Ports

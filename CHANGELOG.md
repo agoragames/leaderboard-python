@@ -1,6 +1,12 @@
 # CHANGELOG
 
-## 2.2.2 (2012-02-22)
+## 2.3.0 (2013-05-15)
+
+* Added `members_only` option for various leaderboard requests - HT: [Simon Zimmerman](https://github.com/simonz05)
+* `leaders` call should return `[]` in case of an empty result set - HT: [Simon Zimmerman](https://github.com/simonz05)
+* Initializer no longer deep copies options - HT: [Simon Zimmerman](https://github.com/simonz05)
+
+## 2.2.2 (2013-02-22)
 
 * Fixed a data leak in `expire_leaderboard` and `expire_leaderboard_at` to also set expiration on the member data hash.
 
@@ -10,7 +16,7 @@
 
 ## 2.2.0 (2012-12-03)
 
-* Added `rank_member_if` and `rank_member_if_in` methods that allow you to rank a member in the leaderboard based on execution of a function. 
+* Added `rank_member_if` and `rank_member_if_in` methods that allow you to rank a member in the leaderboard based on execution of a function.
 * Added `rank_members` and `rank_members_in` methods that allow you to rank multiple members in a leaderboard at once by passing in an array of members and scores.
 
 ## 2.1 (2012-11-27)
