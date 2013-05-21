@@ -126,6 +126,18 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.remove_members_in_score_range(2, 4)
     self.leaderboard.total_members().should.equal(2)
 
+  def test_remove_members_in_rank_range(self):
+    self.__rank_members_in_leaderboard()
+    self.leaderboard.total_members().should.equal(5)
+    self.leaderboard.remove_members_in_rank_range(2, 4)
+    self.leaderboard.total_members().should.equal(2)
+    # remove every everyone except the leader
+    self.leaderboard.remove_members_in_rank_range(1, -1)
+    self.leaderboard.total_members().should.equal(1)
+    # remove everyone
+    self.leaderboard.remove_members_in_rank_range(0, -1)
+    self.leaderboard.total_members().should.equal(0)
+
   def test_page_for(self):
     self.leaderboard.page_for('jones').should.equal(0)
 
