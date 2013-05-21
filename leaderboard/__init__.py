@@ -401,6 +401,26 @@ class Leaderboard(object):
     '''
     self.redis_connection.zremrangebyscore(leaderboard_name, min_score, max_score)
 
+  def remove_members_outside_rank(self, max_rank):
+    '''
+    Remove members from the leaderboard in a given rank range.
+    @param min_rank [int] Minimum rank.
+    @param max_rank [int] Maximum rank.
+    '''
+    self.remove_members_outside_rank_in(self.leaderboard_name, max_rank)
+
+  def remove_members_outside_rank_in(self, leaderboard_name, max_rank):
+    '''
+    Remove members from the named leaderboard in a given rank range.
+    @param leaderboard_name [String] Name of the leaderboard.
+    @param max_rank [int] Maximum rank.
+    '''
+    if self.order == self.DESC:
+      max_rank = -(max_rank) - 1
+      self.redis_connection.zremrangebyrank(leaderboard_name, 0, max_rank)
+    else:
+      self.redis_connection.zremrangebyrank(leaderboard_name, max_rank, -1)
+
   def page_for(self, member, page_size = DEFAULT_PAGE_SIZE):
     '''
     Determine the page where a member falls in the leaderboard.
