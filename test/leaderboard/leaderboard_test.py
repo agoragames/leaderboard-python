@@ -130,7 +130,7 @@ class LeaderboardTest(unittest.TestCase):
     self.__rank_members_in_leaderboard()
 
     self.leaderboard.total_members().should.equal(5)
-    self.leaderboard.remove_members_outside_rank(3)
+    self.leaderboard.remove_members_outside_rank(3).should.equal(2)
 
     leaders = self.leaderboard.leaders(1)
     len(leaders).should.equal(3)
@@ -141,7 +141,7 @@ class LeaderboardTest(unittest.TestCase):
     self.__rank_members_in_leaderboard()
 
     self.leaderboard.total_members().should.equal(5)
-    self.leaderboard.remove_members_outside_rank(3)
+    self.leaderboard.remove_members_outside_rank(3).should.equal(2)
 
     leaders = self.leaderboard.leaders(1)
     len(leaders).should.equal(3)
