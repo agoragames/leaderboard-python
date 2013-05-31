@@ -126,6 +126,28 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.remove_members_in_score_range(2, 4)
     self.leaderboard.total_members().should.equal(2)
 
+  def test_remove_members_outside_rank(self):
+    self.__rank_members_in_leaderboard()
+
+    self.leaderboard.total_members().should.equal(5)
+    self.leaderboard.remove_members_outside_rank(3).should.equal(2)
+
+    leaders = self.leaderboard.leaders(1)
+    len(leaders).should.equal(3)
+    leaders[0]['member'].should.equal('member_5')
+    leaders[2]['member'].should.equal('member_3')
+
+    self.leaderboard.order = Leaderboard.ASC
+    self.__rank_members_in_leaderboard()
+
+    self.leaderboard.total_members().should.equal(5)
+    self.leaderboard.remove_members_outside_rank(3).should.equal(2)
+
+    leaders = self.leaderboard.leaders(1)
+    len(leaders).should.equal(3)
+    leaders[0]['member'].should.equal('member_1')
+    leaders[2]['member'].should.equal('member_3')
+
   def test_page_for(self):
     self.leaderboard.page_for('jones').should.equal(0)
 
