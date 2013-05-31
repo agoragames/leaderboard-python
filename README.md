@@ -123,9 +123,9 @@ highscore_lb.members_from_rank_range(1, 5)
 
 #### Optional member data notes
 
-If you use optional member data, the use of the `remove_members_in_score_range` will leave data around in the member data
-hash. This is because the internal Redis method, `zremrangebyscore`, only returns the number of items removed. It does
-not return the members that it removed.
+If you use optional member data, the use of the `remove_members_in_score_range` or `remove_members_outside_rank` methods
+will leave data around in the member data hash. This is because the internal Redis method, `zremrangebyscore`,
+only returns the number of items removed. It does not return the members that it removed.
 
 #### Leaderboard request options
 
