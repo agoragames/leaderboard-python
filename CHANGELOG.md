@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## master ()
+
+* Added `rank_member_across` method to be able to rank a member across multiple leaderboards at once.
+* Fixed bugs in `leaders_in` and `around_me_in` methods that would not correctly use the `leaderboard_name` argument.
+
 ## 2.4.0 (2013-05-31)
 
 * Added `remove_members_outside_rank` method to remove members from the leaderboard outside a given rank.

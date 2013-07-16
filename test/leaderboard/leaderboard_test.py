@@ -404,6 +404,11 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.rank_members(['member_1', 1000, 'member_2', 3000])
     self.leaderboard.total_members().should.equal(2)
 
+  def test_rank_member_across(self):
+    self.leaderboard.rank_member_across(['highscores', 'more_highscores'], 'david', 50000, { 'member_name': 'david' })
+    len(self.leaderboard.leaders_in('highscores', 1)).should.equal(1)
+    len(self.leaderboard.leaders_in('more_highscores', 1)).should.equal(1)
+
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })
