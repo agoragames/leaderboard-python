@@ -8,7 +8,7 @@ def grouper(n, iterable, fillvalue=None):
   return izip_longest(fillvalue=fillvalue, *args)
 
 class Leaderboard(object):
-  VERSION = '2.4.0'
+  VERSION = '2.5.0'
   DEFAULT_PAGE_SIZE = 25
   DEFAULT_REDIS_HOST = 'localhost'
   DEFAULT_REDIS_PORT = 6379
@@ -103,6 +103,22 @@ class Leaderboard(object):
     pipeline.zadd(leaderboard_name, member, score)
     if member_data:
       pipeline.hset(self._member_data_key(leaderboard_name), member, member_data)
+    pipeline.execute()
+
+  def rank_member_across(self, leaderboards, member, score, member_data = None):
+    '''
+    Rank a member across multiple leaderboards.
+
+    @param leaderboards [Array] Leaderboard names.
+    @param member [String] Member name.
+    @param score [float] Member score.
+    @param member_data [String] Optional member data.
+    '''
+    pipeline = self.redis_connection.pipeline()
+    for leaderboard_name in leaderboards:
+      pipeline.zadd(leaderboard_name, member, score)
+      if member_data:
+        pipeline.hset(self._member_data_key(leaderboard_name), member, member_data)
     pipeline.execute()
 
   def rank_member_if(self, rank_conditional, member, score, member_data = None):
@@ -553,8 +569,8 @@ class Leaderboard(object):
 
     ending_offset = (starting_offset + page_size) - 1
 
-    raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
-    return self._parse_raw_members(self.leaderboard_name, raw_leader_data, **options)
+    raw_leader_data = self._range_method(self.redis_connection, leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
+    return self._parse_raw_members(leaderboard_name, raw_leader_data, **options)
 
   def all_leaders(self, **options):
     '''
@@ -695,7 +711,7 @@ class Leaderboard(object):
 
     ending_offset = (starting_offset + page_size) - 1
 
-    raw_leader_data = self._range_method(self.redis_connection, self.leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
+    raw_leader_data = self._range_method(self.redis_connection, leaderboard_name, int(starting_offset), int(ending_offset), withscores = False)
     return self._parse_raw_members(leaderboard_name, raw_leader_data, **options)
 
   def ranked_in_list(self, members, **options):
