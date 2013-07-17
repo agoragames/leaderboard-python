@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## master ()
+## 2.5.0 (2013-07-17)
 
 * Added `rank_member_across` method to be able to rank a member across multiple leaderboards at once.
 * Fixed bugs in `leaders_in` and `around_me_in` methods that would not correctly use the `leaderboard_name` argument.

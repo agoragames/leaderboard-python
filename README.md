@@ -170,6 +170,12 @@ highscore_lb.score_for('david')
 1338.0
 ```
 
+### Ranking a member across multiple leaderboards
+
+```ruby
+highscore_lb.rank_member_across(['highscores', 'more_highscores'], 'david', 50000, { 'member_name': 'david' })
+```
+
 ## Performance Metrics
 
 You can view [performance metrics](https://github.com/agoragames/leaderboard#performance-metrics) for the
