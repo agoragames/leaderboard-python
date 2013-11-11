@@ -495,6 +495,44 @@ class Leaderboard(object):
     else:
       return percentile
 
+  def score_for_percentile(self, percentile):
+    '''
+    Calculate the score for a given percentile value in the leaderboard.
+    @param percentile [float] Percentile value (0.0 to 100.0 inclusive).
+    @return the score corresponding to the percentile argument. Return +None+ for arguments outside 0-100 inclusive and for leaderboards with no members.
+    '''
+    return self.score_for_percentile_in(self.leaderboard_name, percentile)
+
+  def score_for_percentile_in(self, leaderboard_name, percentile):
+    '''
+    Calculate the score for a given percentile value in the leaderboard.
+    @param leaderboard_name [String] Name of the leaderboard.
+    @param percentile [float] Percentile value (0.0 to 100.0 inclusive).
+    @return the score corresponding to the percentile argument. Return +None+ for arguments outside 0-100 inclusive and for leaderboards with no members.
+    '''
+
+    if not 0 <= percentile <= 100:
+      return None
+
+    total_members = self.total_members_in(leaderboard_name)
+    if total_members < 1:
+      return None
+
+    if self.order == self.ASC:
+      percentile = 100 - percentile
+
+    index = (total_members - 1) * (percentile / 100.0)
+
+    scores = [pair[1] for pair in self.redis_connection.zrange(
+      leaderboard_name, int(math.floor(index)), int(math.ceil(index)), withscores = True
+    )]
+
+    if index == math.floor(index):
+      return scores[0]
+    else:
+      interpolate_fraction = index - math.floor(index)
+      return scores[0] + interpolate_fraction * (scores[1] - scores[0])
+
   def expire_leaderboard(self, seconds):
     '''
     Expire the current leaderboard in a set number of seconds. Do not use this with
