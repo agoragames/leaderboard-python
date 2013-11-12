@@ -8,7 +8,7 @@ def grouper(n, iterable, fillvalue=None):
   return izip_longest(fillvalue=fillvalue, *args)
 
 class Leaderboard(object):
-  VERSION = '2.5.0'
+  VERSION = '2.6.0'
   DEFAULT_PAGE_SIZE = 25
   DEFAULT_REDIS_HOST = 'localhost'
   DEFAULT_REDIS_PORT = 6379
@@ -510,7 +510,6 @@ class Leaderboard(object):
     @param percentile [float] Percentile value (0.0 to 100.0 inclusive).
     @return the score corresponding to the percentile argument. Return +None+ for arguments outside 0-100 inclusive and for leaderboards with no members.
     '''
-
     if not 0 <= percentile <= 100:
       return None
 
