@@ -183,6 +183,25 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.percentile_for('member_4').should.eql(25)
     self.leaderboard.percentile_for('member_12').should.eql(92)
 
+  def test_score_for_percentile(self):
+    self.__rank_members_in_leaderboard(6)
+
+    self.leaderboard.score_for_percentile(0).should.eql(1.0)
+    self.leaderboard.score_for_percentile(75).should.eql(4.0)
+    self.leaderboard.score_for_percentile(87.5).should.eql(4.5)
+    self.leaderboard.score_for_percentile(93.75).should.eql(4.75)
+    self.leaderboard.score_for_percentile(100).should.eql(5.0)
+
+  def test_score_for_percentile_with_sort_option_ASC(self):
+    self.leaderboard.order = Leaderboard.ASC
+    self.__rank_members_in_leaderboard(6)
+
+    self.leaderboard.score_for_percentile(0).should.eql(5.0)
+    self.leaderboard.score_for_percentile(75).should.eql(2.0)
+    self.leaderboard.score_for_percentile(87.5).should.eql(1.5)
+    self.leaderboard.score_for_percentile(93.75).should.eql(1.25)
+    self.leaderboard.score_for_percentile(100).should.eql(1.0)
+
   def test_expire_leaderboard(self):
     self.__rank_members_in_leaderboard()
     self.leaderboard.expire_leaderboard(3)
