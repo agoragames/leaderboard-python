@@ -209,5 +209,5 @@ Unofficially supported (they need some feature parity love):
 
 ## Copyright
 
-Copyright (c) 2011-2013 Ola Mork, David Czarnecki. See LICENSE.txt for further details.
+Copyright (c) 2011-2014 Ola Mork, David Czarnecki. See LICENSE.txt for further details.
 
