@@ -428,6 +428,13 @@ class LeaderboardTest(unittest.TestCase):
     len(self.leaderboard.leaders_in('highscores', 1)).should.equal(1)
     len(self.leaderboard.leaders_in('more_highscores', 1)).should.equal(1)
 
+  def test_can_use_StrictRedis_class_for_connection(self):
+    lb = Leaderboard('lb1', connection = StrictRedis(db = 0))
+    lb.rank_member('david', 50.1)
+    lb.score_for('david').should.equal(50.1)
+    lb.rank_for('david').should.equal(1)
+    len(lb.leaders(1)).should.equal(1)
+
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })
