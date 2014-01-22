@@ -100,7 +100,10 @@ class Leaderboard(object):
     @param member_data [String] Optional member data.
     '''
     pipeline = self.redis_connection.pipeline()
-    pipeline.zadd(leaderboard_name, member, score)
+    if isinstance(self.redis_connection, Redis):
+      pipeline.zadd(leaderboard_name, member, score)
+    else:
+      pipeline.zadd(leaderboard_name, score, member)
     if member_data:
       pipeline.hset(self._member_data_key(leaderboard_name), member, member_data)
     pipeline.execute()
@@ -116,7 +119,10 @@ class Leaderboard(object):
     '''
     pipeline = self.redis_connection.pipeline()
     for leaderboard_name in leaderboards:
-      pipeline.zadd(leaderboard_name, member, score)
+      if isinstance(self.redis_connection, Redis):
+        pipeline.zadd(leaderboard_name, member, score)
+      else:
+        pipeline.zadd(leaderboard_name, score, member)
       if member_data:
         pipeline.hset(self._member_data_key(leaderboard_name), member, member_data)
     pipeline.execute()
@@ -174,7 +180,10 @@ class Leaderboard(object):
     '''
     pipeline = self.redis_connection.pipeline()
     for member, score in grouper(2, members_and_scores):
-      pipeline.zadd(leaderboard_name, member, score)
+      if isinstance(self.redis_connection, Redis):
+        pipeline.zadd(leaderboard_name, member, score)
+      else:
+        pipeline.zadd(leaderboard_name, score, member)
     pipeline.execute()
 
   def member_data_for(self, member):
