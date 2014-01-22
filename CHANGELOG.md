@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.6.1 (2014-01-22)
+
+* Identify client class and send appropriate zadd command. Resolves [#17](https://github.com/agoragames/leaderboard-python/issues/17).
+
 ## 2.6.0 (2013-11-12)
 
 * Added `score_for_percentile` method to be able to calculate the score for a given percentile value in the leaderboard.
