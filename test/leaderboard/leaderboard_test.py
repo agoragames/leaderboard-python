@@ -10,6 +10,10 @@ class LeaderboardTest(unittest.TestCase):
 
   def tearDown(self):
     self.leaderboard.redis_connection.flushdb()
+    Leaderboard.MEMBER_KEY = 'member'
+    Leaderboard.SCORE_KEY = 'score'
+    Leaderboard.RANK_KEY = 'rank'
+    Leaderboard.MEMBER_DATA_KEY = 'member_data'
 
   def test_version(self):
     Leaderboard.VERSION.should.equal('2.6.1')
@@ -427,6 +431,20 @@ class LeaderboardTest(unittest.TestCase):
     self.leaderboard.rank_member_across(['highscores', 'more_highscores'], 'david', 50000, { 'member_name': 'david' })
     len(self.leaderboard.leaders_in('highscores', 1)).should.equal(1)
     len(self.leaderboard.leaders_in('more_highscores', 1)).should.equal(1)
+
+  def test_custom_keys_for_member_score_rank_and_member_data(self):
+    Leaderboard.MEMBER_KEY = 'member_custom'
+    Leaderboard.SCORE_KEY = 'score_custom'
+    Leaderboard.RANK_KEY = 'rank_custom'
+    Leaderboard.MEMBER_DATA_KEY = 'member_data_custom'
+
+    self.__rank_members_in_leaderboard(26)
+    leaders = self.leaderboard.leaders(1, with_member_data = True)
+    len(leaders).should.equal(25)
+    leaders[0]['member_custom'].should.equal('member_25')
+    leaders[0]['score_custom'].should.equal(25)
+    leaders[0]['rank_custom'].should.equal(1)
+    leaders[0]['member_data_custom'].should.equal("{'member_name': 'Leaderboard member 25'}")
 
   def test_can_use_StrictRedis_class_for_connection(self):
     lb = Leaderboard('lb1', connection = StrictRedis(db = 0))
