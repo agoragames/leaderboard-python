@@ -15,6 +15,10 @@ class Leaderboard(object):
   DEFAULT_REDIS_DB = 0
   ASC = 'asc'
   DESC = 'desc'
+  MEMBER_KEY = 'member'
+  MEMBER_DATA_KEY = 'member_data'
+  SCORE_KEY = 'score'
+  RANK_KEY = 'rank'
 
   @classmethod
   def pool(self, host, port, db, pools={}):
@@ -387,9 +391,9 @@ class Leaderboard(object):
     @return the score and rank for a member in the named leaderboard as a Hash.
     '''
     return {
-      'member' : member,
-      'score' : self.score_for_in(leaderboard_name, member),
-      'rank' : self.rank_for_in(leaderboard_name, member)
+      self.MEMBER_KEY : member,
+      self.SCORE_KEY : self.score_for_in(leaderboard_name, member),
+      self.RANK_KEY : self.rank_for_in(leaderboard_name, member)
     }
 
   def change_score_for(self, member, delta):
@@ -793,26 +797,26 @@ class Leaderboard(object):
 
     for index, member in enumerate(members):
       data = {}
-      data['member'] = member
+      data[self.MEMBER_KEY] = member
       rank = responses[index * 2]
       if rank is not None:
         rank += 1
-      data['rank'] = rank
+      data[self.RANK_KEY] = rank
       score = responses[index * 2 + 1]
       if score is not None:
         score = float(score)
-      data['score'] = score
+      data[self.SCORE_KEY] = score
 
       if ('with_member_data' in options) and (True == options['with_member_data']):
-        data['member_data'] = self.member_data_for_in(leaderboard_name, member)
+        data[self.MEMBER_DATA_KEY] = self.member_data_for_in(leaderboard_name, member)
 
       ranks_for_members.append(data)
 
     if 'sort_by' in options:
-      if 'rank' == options['sort_by']:
-        ranks_for_members = sorted(ranks_for_members, key = lambda member: member['rank'])
-      elif 'score' == options['sort_by']:
-        ranks_for_members = sorted(ranks_for_members, key = lambda member: member['score'])
+      if self.RANK_KEY == options['sort_by']:
+        ranks_for_members = sorted(ranks_for_members, key = lambda member: member[self.RANK_KEY])
+      elif self.SCORE_KEY == options['sort_by']:
+        ranks_for_members = sorted(ranks_for_members, key = lambda member: member[self.SCORE_KEY])
 
     return ranks_for_members
 
@@ -860,7 +864,7 @@ class Leaderboard(object):
     @return a list of members.
     '''
     if members_only:
-      return [{'member': m} for m in members]
+      return [{self.MEMBER_KEY: m} for m in members]
 
     if members:
       return self.ranked_in_list_in(leaderboard_name, members, **options)
