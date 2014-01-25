@@ -2,7 +2,7 @@
 
 ## 2.7.0 (2014-01-24)
 
-* Allow for custom keys to be set for customizing the data returned from calls like `leaders` or `around_me` [#18](https://github.com/agoragames/leaderboard-python/pull/18)
+* Allow for custom keys to be set for customizing the data returned from calls like `leaders` or `around_me` [#18](https://github.com/agoragames/leaderboard-python/pull/18). Thanks @seaders.
 
 ## 2.6.1 (2014-01-22)
 
