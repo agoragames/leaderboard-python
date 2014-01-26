@@ -79,6 +79,7 @@ class Leaderboard(object):
   def delete_leaderboard_named(self, leaderboard_name):
     '''
     Delete the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     '''
     pipeline = self.redis_connection.pipeline()
@@ -89,6 +90,7 @@ class Leaderboard(object):
   def rank_member(self, member, score, member_data = None):
     '''
     Rank a member in the leaderboard.
+
     @param member [String] Member name.
     @param score [float] Member score.
     @param member_data [String] Optional member data.
@@ -98,6 +100,7 @@ class Leaderboard(object):
   def rank_member_in(self, leaderboard_name, member, score, member_data = None):
     '''
     Rank a member in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
@@ -134,12 +137,14 @@ class Leaderboard(object):
   def rank_member_if(self, rank_conditional, member, score, member_data = None):
     '''
     Rank a member in the leaderboard based on execution of the +rank_conditional+.
+
     The +rank_conditional+ is passed the following parameters:
       member: Member name.
       current_score: Current score for the member in the leaderboard.
       score: Member score.
       member_data: Optional member data.
       leaderboard_options: Leaderboard options, e.g. 'reverse': Value of reverse option
+
     @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
     @param member [String] Member name.
     @param score [float] Member score.
@@ -150,12 +155,14 @@ class Leaderboard(object):
   def rank_member_if_in(self, leaderboard_name, rank_conditional, member, score, member_data = None):
     '''
     Rank a member in the named leaderboard based on execution of the +rank_conditional+.
+
     The +rank_conditional+ is passed the following parameters:
       member: Member name.
       current_score: Current score for the member in the leaderboard.
       score: Member score.
       member_data: Optional member data.
       leaderboard_options: Leaderboard options, e.g. 'reverse': Value of reverse option
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param rank_conditional [function] Function which must return +True+ or +False+ that controls whether or not the member is ranked in the leaderboard.
     @param member [String] Member name.
@@ -172,6 +179,7 @@ class Leaderboard(object):
   def rank_members(self, members_and_scores):
     '''
     Rank an array of members in the leaderboard.
+
     @param members_and_scores [Array] Variable list of members and scores.
     '''
     self.rank_members_in(self.leaderboard_name, members_and_scores)
@@ -179,6 +187,7 @@ class Leaderboard(object):
   def rank_members_in(self, leaderboard_name, members_and_scores):
     '''
     Rank an array of members in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param members_and_scores [Array] Variable list of members and scores.
     '''
@@ -193,6 +202,7 @@ class Leaderboard(object):
   def member_data_for(self, member):
     '''
     Retrieve the optional member data for a given member in the leaderboard.
+
     @param member [String] Member name.
     @return String of optional member data.
     '''
@@ -201,6 +211,7 @@ class Leaderboard(object):
   def member_data_for_in(self, leaderboard_name, member):
     '''
     Retrieve the optional member data for a given member in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @return String of optional member data.
@@ -210,6 +221,7 @@ class Leaderboard(object):
   def update_member_data(self, member, member_data):
     '''
     Update the optional member data for a given member in the leaderboard.
+
     @param member [String] Member name.
     @param member_data [String] Optional member data.
     '''
@@ -218,6 +230,7 @@ class Leaderboard(object):
   def update_member_data_in(self, leaderboard_name, member, member_data):
     '''
     Update the optional member data for a given member in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @param member_data [String] Optional member data.
@@ -227,6 +240,7 @@ class Leaderboard(object):
   def remove_member_data(self, member):
     '''
     Remove the optional member data for a given member in the leaderboard.
+
     @param member [String] Member name.
     '''
     self.remove_member_data_in(self.leaderboard_name, member)
@@ -234,6 +248,7 @@ class Leaderboard(object):
   def remove_member_data_in(self, leaderboard_name, member):
     '''
     Remove the optional member data for a given member in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     '''
@@ -242,6 +257,7 @@ class Leaderboard(object):
   def total_members(self):
     '''
     Retrieve the total number of members in the leaderboard.
+
     @return total number of members in the leaderboard.
     '''
     return self.total_members_in(self.leaderboard_name)
@@ -249,6 +265,7 @@ class Leaderboard(object):
   def total_members_in(self, leaderboard_name):
     '''
     Retrieve the total number of members in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @return the total number of members in the named leaderboard.
     '''
@@ -257,6 +274,7 @@ class Leaderboard(object):
   def remove_member(self, member):
     '''
     Remove a member from the leaderboard.
+
     @param member [String] Member name.
     '''
     self.remove_member_from(self.leaderboard_name, member)
@@ -264,6 +282,7 @@ class Leaderboard(object):
   def remove_member_from(self, leaderboard_name, member):
     '''
     Remove the optional member data for a given member in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     '''
@@ -275,6 +294,7 @@ class Leaderboard(object):
   def total_pages(self, page_size = None):
     '''
     Retrieve the total number of pages in the leaderboard.
+
     @param page_size [int, nil] Page size to be used when calculating the total number of pages.
     @return the total number of pages in the leaderboard.
     '''
@@ -283,6 +303,7 @@ class Leaderboard(object):
   def total_pages_in(self, leaderboard_name, page_size = None):
     '''
     Retrieve the total number of pages in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param page_size [int, nil] Page size to be used when calculating the total number of pages.
     @return the total number of pages in the named leaderboard.
@@ -295,6 +316,7 @@ class Leaderboard(object):
   def total_members_in_score_range(self, min_score, max_score):
     '''
     Retrieve the total members in a given score range from the leaderboard.
+
     @param min_score [float] Minimum score.
     @param max_score [float] Maximum score.
     @return the total members in a given score range from the leaderboard.
@@ -304,6 +326,7 @@ class Leaderboard(object):
   def total_members_in_score_range_in(self, leaderboard_name, min_score, max_score):
     '''
     Retrieve the total members in a given score range from the named leaderboard.
+
     @param leaderboard_name Name of the leaderboard.
     @param min_score [float] Minimum score.
     @param max_score [float] Maximum score.
@@ -314,6 +337,7 @@ class Leaderboard(object):
   def check_member(self, member):
     '''
     Check to see if a member exists in the leaderboard.
+
     @param member [String] Member name.
     @return +true+ if the member exists in the leaderboard, +false+ otherwise.
     '''
@@ -322,6 +346,7 @@ class Leaderboard(object):
   def check_member_in(self, leaderboard_name, member):
     '''
     Check to see if a member exists in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @return +true+ if the member exists in the named leaderboard, +false+ otherwise.
@@ -331,6 +356,7 @@ class Leaderboard(object):
   def rank_for(self, member):
     '''
     Retrieve the rank for a member in the leaderboard.
+
     @param member [String] Member name.
     @return the rank for a member in the leaderboard.
     '''
@@ -339,6 +365,7 @@ class Leaderboard(object):
   def rank_for_in(self, leaderboard_name, member):
     '''
     Retrieve the rank for a member in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @return the rank for a member in the leaderboard.
@@ -357,6 +384,7 @@ class Leaderboard(object):
   def score_for(self, member):
     '''
     Retrieve the score for a member in the leaderboard.
+
     @param member Member name.
     @return the score for a member in the leaderboard or +None+ if the member is not in the leaderboard.
     '''
@@ -365,6 +393,7 @@ class Leaderboard(object):
   def score_for_in(self, leaderboard_name, member):
     '''
     Retrieve the score for a member in the named leaderboard.
+
     @param leaderboard_name Name of the leaderboard.
     @param member [String] Member name.
     @return the score for a member in the leaderboard or +None+ if the member is not in the leaderboard.
@@ -378,6 +407,7 @@ class Leaderboard(object):
   def score_and_rank_for(self, member):
     '''
     Retrieve the score and rank for a member in the leaderboard.
+
     @param member [String] Member name.
     @return the score and rank for a member in the leaderboard as a Hash.
     '''
@@ -386,6 +416,7 @@ class Leaderboard(object):
   def score_and_rank_for_in(self, leaderboard_name, member):
     '''
     Retrieve the score and rank for a member in the named leaderboard.
+
     @param leaderboard_name [String]Name of the leaderboard.
     @param member [String] Member name.
     @return the score and rank for a member in the named leaderboard as a Hash.
@@ -399,6 +430,7 @@ class Leaderboard(object):
   def change_score_for(self, member, delta):
     '''
     Change the score for a member in the leaderboard by a score delta which can be positive or negative.
+
     @param member [String] Member name.
     @param delta [float] Score change.
     '''
@@ -407,6 +439,7 @@ class Leaderboard(object):
   def change_score_for_member_in(self, leaderboard_name, member, delta):
     '''
     Change the score for a member in the named leaderboard by a delta which can be positive or negative.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @param delta [float] Score change.
@@ -416,6 +449,7 @@ class Leaderboard(object):
   def remove_members_in_score_range(self, min_score, max_score):
     '''
     Remove members from the leaderboard in a given score range.
+
     @param min_score [float] Minimum score.
     @param max_score [float] Maximum score.
     '''
@@ -424,6 +458,7 @@ class Leaderboard(object):
   def remove_members_in_score_range_in(self, leaderboard_name, min_score, max_score):
     '''
     Remove members from the named leaderboard in a given score range.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param min_score [float] Minimum score.
     @param max_score [float] Maximum score.
@@ -433,6 +468,7 @@ class Leaderboard(object):
   def remove_members_outside_rank(self, rank):
     '''
     Remove members from the leaderboard in a given rank range.
+
     @param rank [int] the rank (inclusive) which we should keep.
     @return the total member count which was removed.
     '''
@@ -441,6 +477,7 @@ class Leaderboard(object):
   def remove_members_outside_rank_in(self, leaderboard_name, rank):
     '''
     Remove members from the named leaderboard in a given rank range.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param rank [int] the rank (inclusive) which we should keep.
     @return the total member count which was removed.
@@ -454,6 +491,7 @@ class Leaderboard(object):
   def page_for(self, member, page_size = DEFAULT_PAGE_SIZE):
     '''
     Determine the page where a member falls in the leaderboard.
+
     @param member [String] Member name.
     @param page_size [int] Page size to be used in determining page location.
     @return the page where a member falls in the leaderboard.
@@ -463,6 +501,7 @@ class Leaderboard(object):
   def page_for_in(self, leaderboard_name, member, page_size = DEFAULT_PAGE_SIZE):
     '''
     Determine the page where a member falls in the named leaderboard.
+
     @param leaderboard [String] Name of the leaderboard.
     @param member [String] Member name.
     @param page_size [int] Page size to be used in determining page location.
@@ -484,6 +523,7 @@ class Leaderboard(object):
   def percentile_for(self, member):
     '''
     Retrieve the percentile for a member in the leaderboard.
+
     @param member [String] Member name.
     @return the percentile for a member in the leaderboard. Return +nil+ for a non-existent member.
     '''
@@ -492,6 +532,7 @@ class Leaderboard(object):
   def percentile_for_in(self, leaderboard_name, member):
     '''
     Retrieve the percentile for a member in the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @return the percentile for a member in the named leaderboard.
@@ -511,6 +552,7 @@ class Leaderboard(object):
   def score_for_percentile(self, percentile):
     '''
     Calculate the score for a given percentile value in the leaderboard.
+
     @param percentile [float] Percentile value (0.0 to 100.0 inclusive).
     @return the score corresponding to the percentile argument. Return +None+ for arguments outside 0-100 inclusive and for leaderboards with no members.
     '''
@@ -519,6 +561,7 @@ class Leaderboard(object):
   def score_for_percentile_in(self, leaderboard_name, percentile):
     '''
     Calculate the score for a given percentile value in the leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param percentile [float] Percentile value (0.0 to 100.0 inclusive).
     @return the score corresponding to the percentile argument. Return +None+ for arguments outside 0-100 inclusive and for leaderboards with no members.
@@ -550,6 +593,7 @@ class Leaderboard(object):
     Expire the current leaderboard in a set number of seconds. Do not use this with
     leaderboards that utilize member data as there is no facility to cascade the
     expiration out to the keys for the member data.
+
     @param seconds [int] Number of seconds after which the leaderboard will be expired.
     '''
     self.expire_leaderboard_for(self.leaderboard_name, seconds)
@@ -559,6 +603,7 @@ class Leaderboard(object):
     Expire the given leaderboard in a set number of seconds. Do not use this with
     leaderboards that utilize member data as there is no facility to cascade the
     expiration out to the keys for the member data.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param seconds [int] Number of seconds after which the leaderboard will be expired.
     '''
@@ -572,6 +617,7 @@ class Leaderboard(object):
     Expire the current leaderboard at a specific UNIX timestamp. Do not use this with
     leaderboards that utilize member data as there is no facility to cascade the
     expiration out to the keys for the member data.
+
     @param timestamp [int] UNIX timestamp at which the leaderboard will be expired.
     '''
     self.expire_leaderboard_at_for(self.leaderboard_name, timestamp)
@@ -581,6 +627,7 @@ class Leaderboard(object):
     Expire the given leaderboard at a specific UNIX timestamp. Do not use this with
     leaderboards that utilize member data as there is no facility to cascade the
     expiration out to the keys for the member data.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param timestamp [int] UNIX timestamp at which the leaderboard will be expired.
     '''
@@ -592,6 +639,7 @@ class Leaderboard(object):
   def leaders(self, current_page, **options):
     '''
     Retrieve a page of leaders from the leaderboard.
+
     @param current_page [int] Page to retrieve from the leaderboard.
     @param options [Hash] Options to be used when retrieving the page from the leaderboard.
     @return a page of leaders from the leaderboard.
@@ -601,6 +649,7 @@ class Leaderboard(object):
   def leaders_in(self, leaderboard_name, current_page, **options):
     '''
     Retrieve a page of leaders from the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param current_page [int] Page to retrieve from the named leaderboard.
     @param options [Hash] Options to be used when retrieving the page from the named leaderboard.
@@ -625,6 +674,7 @@ class Leaderboard(object):
   def all_leaders(self, **options):
     '''
     Retrieve all leaders from the leaderboard.
+
     @param options [Hash] Options to be used when retrieving the leaders from the leaderboard.
     @return the leaders from the leaderboard.
     '''
@@ -633,6 +683,7 @@ class Leaderboard(object):
   def all_leaders_from(self, leaderboard_name, **options):
     '''
     Retrieves all leaders from the named leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param options [Hash] Options to be used when retrieving the leaders from the named leaderboard.
     @return the named leaderboard.
@@ -643,6 +694,7 @@ class Leaderboard(object):
   def members_from_score_range(self, minimum_score, maximum_score, **options):
     '''
     Retrieve members from the leaderboard within a given score range.
+
     @param minimum_score [float] Minimum score (inclusive).
     @param maximum_score [float] Maximum score (inclusive).
     @param options [Hash] Options to be used when retrieving the data from the leaderboard.
@@ -653,6 +705,7 @@ class Leaderboard(object):
   def members_from_score_range_in(self, leaderboard_name, minimum_score, maximum_score, **options):
     '''
     Retrieve members from the named leaderboard within a given score range.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param minimum_score [float] Minimum score (inclusive).
     @param maximum_score [float] Maximum score (inclusive).
@@ -669,6 +722,7 @@ class Leaderboard(object):
   def members_from_rank_range(self, starting_rank, ending_rank, **options):
     '''
     Retrieve members from the leaderboard within a given rank range.
+
     @param starting_rank [int] Starting rank (inclusive).
     @param ending_rank [int] Ending rank (inclusive).
     @param options [Hash] Options to be used when retrieving the data from the leaderboard.
@@ -679,6 +733,7 @@ class Leaderboard(object):
   def members_from_rank_range_in(self, leaderboard_name, starting_rank, ending_rank, **options):
     '''
     Retrieve members from the named leaderboard within a given rank range.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param starting_rank [int] Starting rank (inclusive).
     @param ending_rank [int] Ending rank (inclusive).
@@ -704,6 +759,7 @@ class Leaderboard(object):
   def member_at(self, position, **options):
     '''
     Retrieve a member at the specified index from the leaderboard.
+
     @param position [int] Position in leaderboard.
     @param options [Hash] Options to be used when retrieving the member from the leaderboard.
     @return a member from the leaderboard.
@@ -713,6 +769,7 @@ class Leaderboard(object):
   def member_at_in(self, leaderboard_name, position, **options):
     '''
     Retrieve a member at the specified index from the leaderboard.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param position [int] Position in named leaderboard.
     @param options [Hash] Options to be used when retrieving the member from the named leaderboard.
@@ -730,6 +787,7 @@ class Leaderboard(object):
   def around_me(self, member, **options):
     '''
     Retrieve a page of leaders from the leaderboard around a given member.
+
     @param member [String] Member name.
     @param options [Hash] Options to be used when retrieving the page from the leaderboard.
     @return a page of leaders from the leaderboard around a given member.
@@ -739,6 +797,7 @@ class Leaderboard(object):
   def around_me_in(self, leaderboard_name, member, **options):
     '''
     Retrieve a page of leaders from the named leaderboard around a given member.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param member [String] Member name.
     @param options [Hash] Options to be used when retrieving the page from the named leaderboard.
@@ -767,6 +826,7 @@ class Leaderboard(object):
   def ranked_in_list(self, members, **options):
     '''
     Retrieve a page of leaders from the leaderboard for a given list of members.
+
     @param members [Array] Member names.
     @param options [Hash] Options to be used when retrieving the page from the leaderboard.
     @return a page of leaders from the leaderboard for a given list of members.
@@ -776,6 +836,7 @@ class Leaderboard(object):
   def ranked_in_list_in(self, leaderboard_name, members, **options):
     '''
     Retrieve a page of leaders from the named leaderboard for a given list of members.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param members [Array] Member names.
     @param options [Hash] Options to be used when retrieving the page from the named leaderboard.
@@ -823,6 +884,7 @@ class Leaderboard(object):
   def merge_leaderboards(self, destination, keys, aggregate = 'SUM'):
     '''
     Merge leaderboards given by keys with this leaderboard into a named destination leaderboard.
+
     @param destination [String] Destination leaderboard name.
     @param keys [Array] Leaderboards to be merged with the current leaderboard.
     @param options [Hash] Options for merging the leaderboards.
@@ -833,6 +895,7 @@ class Leaderboard(object):
   def intersect_leaderboards(self, destination, keys, aggregate = 'SUM'):
     '''
     Intersect leaderboards given by keys with this leaderboard into a named destination leaderboard.
+
     @param destination [String] Destination leaderboard name.
     @param keys [Array] Leaderboards to be merged with the current leaderboard.
     @param options [Hash] Options for intersecting the leaderboards.
@@ -849,6 +912,7 @@ class Leaderboard(object):
   def _member_data_key(self, leaderboard_name):
     '''
     Key for retrieving optional member data.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @return a key in the form of +leaderboard_name:member_data+
     '''
@@ -856,7 +920,9 @@ class Leaderboard(object):
 
   def _parse_raw_members(self, leaderboard_name, members, members_only = False, **options):
     '''
-    Parse the raw leaders data as returned from a given leader board query. Do associative lookups with the member to rank, score and potentially sort the results.
+    Parse the raw leaders data as returned from a given leader board query. Do associative
+    lookups with the member to rank, score and potentially sort the results.
+
     @param leaderboard_name [String] Name of the leaderboard.
     @param members [List] A list of members as returned from a sorted set range query
     @param members_only [bool] Set True to return the members as is, Default is False.
