@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.8.0 (2014-02-15)
+
+* Allow for customization of member_data namespace [#19](https://github.com/agoragames/leaderboard-python/pull/19)
+
 ## 2.7.0 (2014-01-24)
 
 * Allow for custom keys to be set for customizing the data returned from calls like `leaders` or `around_me` [#18](https://github.com/agoragames/leaderboard-python/pull/18). Thanks @seaders.
