@@ -453,6 +453,13 @@ class LeaderboardTest(unittest.TestCase):
     lb.rank_for('david').should.equal(1)
     len(lb.leaders(1)).should.equal(1)
 
+  def test_can_set_member_data_namespace_option(self):
+    self.leaderboard = Leaderboard('name', member_data_namespace = 'md')
+    self.__rank_members_in_leaderboard()
+
+    self.leaderboard.redis_connection.exists("name:member_data").should.be.false
+    self.leaderboard.redis_connection.exists("name:md").should.be.true
+
   def __rank_members_in_leaderboard(self, members_to_add = 6):
     for index in range(1, members_to_add):
       self.leaderboard.rank_member('member_%s' % index, index, { 'member_name': 'Leaderboard member %s' % index })

@@ -13,6 +13,7 @@ class Leaderboard(object):
   DEFAULT_REDIS_HOST = 'localhost'
   DEFAULT_REDIS_PORT = 6379
   DEFAULT_REDIS_DB = 0
+  DEFAULT_MEMBER_DATA_NAMESPACE = 'member_data'
   ASC = 'asc'
   DESC = 'desc'
   MEMBER_KEY = 'member'
@@ -54,6 +55,8 @@ class Leaderboard(object):
     self.page_size = self.options.pop('page_size', self.DEFAULT_PAGE_SIZE)
     if self.page_size < 1:
       self.page_size = self.DEFAULT_PAGE_SIZE
+
+    self.member_data_namespace = self.options.pop('member_data_namespace', self.DEFAULT_MEMBER_DATA_NAMESPACE)
 
     self.order = self.options.pop('order', self.DESC).lower()
     if not self.order in [self.ASC, self.DESC]:
@@ -916,7 +919,7 @@ class Leaderboard(object):
     @param leaderboard_name [String] Name of the leaderboard.
     @return a key in the form of +leaderboard_name:member_data+
     '''
-    return '%s:member_data' % leaderboard_name
+    return '%s:%s' % (leaderboard_name, self.member_data_namespace)
 
   def _parse_raw_members(self, leaderboard_name, members, members_only = False, **options):
     '''
