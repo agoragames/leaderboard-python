@@ -10,7 +10,7 @@ def grouper(n, iterable, fillvalue=None):
 
 
 class Leaderboard(object):
-    VERSION = '2.8.0'
+    VERSION = '2.9.0'
     DEFAULT_PAGE_SIZE = 25
     DEFAULT_REDIS_HOST = 'localhost'
     DEFAULT_REDIS_PORT = 6379
@@ -22,6 +22,7 @@ class Leaderboard(object):
     MEMBER_DATA_KEY = 'member_data'
     SCORE_KEY = 'score'
     RANK_KEY = 'rank'
+    RANK_RELATIVE_KEY = 'rank_relative'
 
     @classmethod
     def pool(self, host, port, db, pools={}):
@@ -966,6 +967,7 @@ class Leaderboard(object):
 
         responses = pipeline.execute()
 
+        score_last = None
         for index, member in enumerate(members):
             data = {}
             data[self.MEMBER_KEY] = member
@@ -977,6 +979,10 @@ class Leaderboard(object):
             if score is not None:
                 score = float(score)
             data[self.SCORE_KEY] = score
+            if score_last is None or score != score_last:
+                rank_relative = index + 1
+            data[self.RANK_RELATIVE_KEY] = rank_relative
+            score_last = score
 
             if ('with_member_data' in options) and (True == options['with_member_data']):
                 data[
