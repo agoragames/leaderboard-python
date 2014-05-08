@@ -932,26 +932,22 @@ class Leaderboard(object):
         return self._parse_raw_members(
             leaderboard_name, raw_leader_data, **options)
 
-    def ranked_in_list(self, members, include_missing=True, **options):
+    def ranked_in_list(self, members, **options):
         '''
         Retrieve a page of leaders from the leaderboard for a given list of members.
 
         @param members [Array] Member names.
-        @param include_missing [Boolean] Whether or not to include members that are missing in the results.
         @param options [Hash] Options to be used when retrieving the page from the leaderboard.
         @return a page of leaders from the leaderboard for a given list of members.
         '''
-        return self.ranked_in_list_in(
-            self.leaderboard_name, members, include_missing, **options)
+        return self.ranked_in_list_in(self.leaderboard_name, members, **options)
 
-    def ranked_in_list_in(
-            self, leaderboard_name, members, include_missing=True, **options):
+    def ranked_in_list_in(self, leaderboard_name, members, **options):
         '''
         Retrieve a page of leaders from the named leaderboard for a given list of members.
 
         @param leaderboard_name [String] Name of the leaderboard.
         @param members [Array] Member names.
-        @param include_missing [Boolean] Whether or not to include members that are missing in the results.
         @param options [Hash] Options to be used when retrieving the page from the named leaderboard.
         @return a page of leaders from the named leaderboard for a given list of members.
         '''
@@ -974,7 +970,7 @@ class Leaderboard(object):
             data[self.MEMBER_KEY] = member
             rank = responses[index * 2]
             if rank is None:
-                if not include_missing:
+                if options.get('include_missing') == False:
                     continue
             else:
                 rank += 1
