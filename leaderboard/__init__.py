@@ -10,7 +10,7 @@ def grouper(n, iterable, fillvalue=None):
 
 
 class Leaderboard(object):
-    VERSION = '2.8.0'
+    VERSION = '2.11.0'
     DEFAULT_PAGE_SIZE = 25
     DEFAULT_REDIS_HOST = 'localhost'
     DEFAULT_REDIS_PORT = 6379
@@ -991,12 +991,14 @@ class Leaderboard(object):
                 ranks_for_members = sorted(
                     ranks_for_members,
                     key=lambda member: member[
-                        self.RANK_KEY])
+                        self.RANK_KEY],
+                    reverse=options.get('reverse'))
             elif self.SCORE_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
                     key=lambda member: member[
-                        self.SCORE_KEY])
+                        self.SCORE_KEY],
+                    reverse=options.get('reverse'))
 
         return ranks_for_members
 
