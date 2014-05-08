@@ -319,14 +319,16 @@ class LeaderboardTest(unittest.TestCase):
         member_15 = {
             'member': 'member_15',
             'score': 15.0,
-            'rank': 11
+            'rank': 11,
+            'rank_relative': 1
         }
         members[0].should.eql(member_15)
 
         member_10 = {
             'member': 'member_10',
             'score': 10.0,
-            'rank': 16
+            'rank': 16,
+            'rank_relative': 6
         }
         members[5].should.eql(member_10)
 
