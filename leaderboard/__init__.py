@@ -10,7 +10,7 @@ def grouper(n, iterable, fillvalue=None):
 
 
 class Leaderboard(object):
-    VERSION = '2.10.0'
+    VERSION = '2.8.0'
     DEFAULT_PAGE_SIZE = 25
     DEFAULT_REDIS_HOST = 'localhost'
     DEFAULT_REDIS_PORT = 6379
