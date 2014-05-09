@@ -121,10 +121,8 @@ class Leaderboard(object):
         else:
             pipeline.zadd(leaderboard_name, score, member)
         if member_data:
-            pipeline.hset(
-                self._member_data_key(leaderboard_name),
-                member,
-                member_data)
+            self._set_member_data(
+                leaderboard_name, member, member_data, pipeline)
         pipeline.execute()
 
     def rank_member_across(
@@ -144,10 +142,8 @@ class Leaderboard(object):
             else:
                 pipeline.zadd(leaderboard_name, score, member)
             if member_data:
-                pipeline.hset(
-                    self._member_data_key(leaderboard_name),
-                    member,
-                    member_data)
+                self._set_member_data(
+                    leaderboard_name, member, member_data, pipeline)
         pipeline.execute()
 
     def rank_member_if(
@@ -264,10 +260,7 @@ class Leaderboard(object):
         @param member [String] Member name.
         @param member_data [String] Optional member data.
         '''
-        self.redis_connection.hset(
-            self._member_data_key(leaderboard_name),
-            member,
-            member_data)
+        self._set_member_data(leaderboard_name, member, member_data)
 
     def remove_member_data(self, member):
         '''
@@ -470,16 +463,18 @@ class Leaderboard(object):
             self.RANK_KEY: self.rank_for_in(leaderboard_name, member)
         }
 
-    def change_score_for(self, member, delta):
+    def change_score_for(self, member, delta, member_data=None):
         '''
         Change the score for a member in the leaderboard by a score delta which can be positive or negative.
 
         @param member [String] Member name.
         @param delta [float] Score change.
         '''
-        self.change_score_for_member_in(self.leaderboard_name, member, delta)
+        self.change_score_for_member_in(
+            self.leaderboard_name, member, delta, member_data)
 
-    def change_score_for_member_in(self, leaderboard_name, member, delta):
+    def change_score_for_member_in(
+            self, leaderboard_name, member, delta, member_data=None):
         '''
         Change the score for a member in the named leaderboard by a delta which can be positive or negative.
 
@@ -487,7 +482,13 @@ class Leaderboard(object):
         @param member [String] Member name.
         @param delta [float] Score change.
         '''
-        self.redis_connection.zincrby(leaderboard_name, member, delta)
+        if not member_data:
+            self.redis_connection.zincrby(leaderboard_name, member, delta)
+            return
+        pipeline = self.redis_connection.pipeline()
+        pipeline.zincrby(leaderboard_name, member, delta)
+        self._set_member_data(leaderboard_name, member, member_data, pipeline)
+        pipeline.execute()
 
     def remove_members_in_score_range(self, min_score, max_score):
         '''
@@ -1036,6 +1037,22 @@ class Leaderboard(object):
         @return a key in the form of +leaderboard_name:member_data+
         '''
         return '%s:%s' % (leaderboard_name, self.member_data_namespace)
+
+    def _set_member_data(
+            self, leaderboard_name, member, member_data, connection=None):
+        '''
+        Utility method for setting member data
+
+        @param leaderboard_name [String] Name of the leaderboard.
+        @param member [String] Member name.
+        @param member_data [String] member data.
+        @param connection [redis.StrictRedis|redis.Redis] optional connection to use (useful for pipelining)
+        '''
+        connection = connection or self.redis_connection
+        connection.hset(
+            self._member_data_key(leaderboard_name),
+            member,
+            member_data)
 
     def _parse_raw_members(
             self, leaderboard_name, members, members_only=False, **options):
