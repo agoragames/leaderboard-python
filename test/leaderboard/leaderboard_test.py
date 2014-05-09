@@ -297,6 +297,27 @@ class LeaderboardTest(unittest.TestCase):
         leaders[1]['member'].should.equal('member_15')
         leaders[2]['member'].should.equal('member_25')
 
+    def test_ranked_in_list_with_include_missing(self):
+        self.__rank_members_in_leaderboard(27)
+
+        # Without `include_missing`:
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_1', 'member_15', 'member_25', 'member_200'])
+        len(leaders).should.be(4)
+        leaders[0]['member'].should.equal('member_1')
+        leaders[1]['member'].should.equal('member_15')
+        leaders[2]['member'].should.equal('member_25')
+        leaders[3]['member'].should.equal('member_200')
+
+        # With `include_missing`:
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_1', 'member_15', 'member_25', 'member_200'],
+            include_missing=False)
+        len(leaders).should.be(3)
+        leaders[0]['member'].should.equal('member_1')
+        leaders[1]['member'].should.equal('member_15')
+        leaders[2]['member'].should.equal('member_25')
+
     def test_ranked_in_list_with_unknown_member(self):
         self.__rank_members_in_leaderboard(27)
         leaders = self.leaderboard.ranked_in_list(['jones'])
