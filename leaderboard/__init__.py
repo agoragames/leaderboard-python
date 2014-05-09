@@ -991,12 +991,14 @@ class Leaderboard(object):
                 ranks_for_members = sorted(
                     ranks_for_members,
                     key=lambda member: member[
-                        self.RANK_KEY])
+                        self.RANK_KEY],
+                    reverse=options.get('sort_by_reverse', False))
             elif self.SCORE_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
                     key=lambda member: member[
-                        self.SCORE_KEY])
+                        self.SCORE_KEY],
+                    reverse=options.get('sort_by_reverse', False))
 
         return ranks_for_members
 
