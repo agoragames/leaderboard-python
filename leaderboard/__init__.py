@@ -68,6 +68,16 @@ class Leaderboard(object):
                 "%s is not one of [%s]" % (self.order, ",".join([self.ASC, self.DESC])))
 
         connection = self.options.pop('connection', None)
+        if connection:
+            # See if the user is using fakeredis (such as for unit tests)
+            try:
+                from fakeredis import FakeRedis, FakeStrictRedis
+                if isinstance(connection, (FakeStrictRedis, FakeRedis)):
+                    self.redis_connection = connection
+                    return
+            except ImportError:
+                # If they don't have fakeredis installed, that's OK too
+                pass
         if isinstance(connection, (StrictRedis, Redis)):
             self.options['connection_pool'] = connection.connection_pool
         if 'connection_pool' not in self.options:
