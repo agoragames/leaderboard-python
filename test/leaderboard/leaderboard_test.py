@@ -288,6 +288,22 @@ class LeaderboardTest(unittest.TestCase):
         leaders[1]['member'].should.equal('member_15')
         leaders[2]['member'].should.equal('member_1')
 
+    def test_ranked_in_list_with_sort_by_reverse(self):
+        self.__rank_members_in_leaderboard(26)
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_25', 'member_1', 'member_15'], sort_by='score', sort_by_reverse=True)
+        len(leaders).should.equal(3)
+        leaders[0]['member'].should.equal('member_25')
+        leaders[1]['member'].should.equal('member_15')
+        leaders[2]['member'].should.equal('member_1')
+
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_25', 'member_1', 'member_15'], sort_by='rank', sort_by_reverse=True)
+        len(leaders).should.be(3)
+        leaders[0]['member'].should.equal('member_1')
+        leaders[1]['member'].should.equal('member_15')
+        leaders[2]['member'].should.equal('member_25')
+
     def test_ranked_in_list(self):
         self.__rank_members_in_leaderboard(27)
         leaders = self.leaderboard.ranked_in_list(
