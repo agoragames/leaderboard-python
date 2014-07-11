@@ -20,6 +20,19 @@ class LeaderboardTest(unittest.TestCase):
     def test_version(self):
         Leaderboard.VERSION.should.equal('2.8.0')
 
+    def test_delete_by_pattern(self):
+        board_to_be_deleted = Leaderboard('name:regionalized:north_america')
+        board_to_be_deleted.rank_member('david', 50.1)
+        other_board_that_should_be_deleted = Leaderboard('name:subname')
+        other_board_that_should_be_deleted.rank_member('david', 50.1)
+        other_board_should_be_left_alone = Leaderboard('unrelated:name')
+        other_board_should_be_left_alone.rank_member('david', 50.1)
+
+        Leaderboard.delete_by_pattern('name:*')
+        self.leaderboard.redis_connection.exists('name:regionalized:north_america').should.be.false
+        self.leaderboard.redis_connection.exists('name:subname').should.be.false
+        self.leaderboard.redis_connection.exists('unrelated:name').should.be.true
+
     def test_init_with_defaults(self):
         'name'.should.equal(self.leaderboard.leaderboard_name)
         len(self.leaderboard.options).should.be(1)

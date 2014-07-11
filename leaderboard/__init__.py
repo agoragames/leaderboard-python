@@ -37,6 +37,19 @@ class Leaderboard(object):
 
         return rval
 
+    @classmethod
+    def delete_by_pattern(self, pattern, **kwargs):
+        '''
+        Uses lua scripting to delete a range of leaderboards with names that match the given pattern
+        '''
+        instance = Leaderboard('dummy', **kwargs)
+        lua = """
+            local keys = redis.call('keys', ARGV[1])
+            return redis.call('del', unpack(keys))
+        """
+        deletion_script = instance.redis_connection.register_script(lua)
+        return deletion_script(args=[pattern])
+
     def __init__(self, leaderboard_name, **options):
         '''
         Initialize a connection to a specific leaderboard. By default, will use a
