@@ -45,7 +45,9 @@ class Leaderboard(object):
         instance = Leaderboard('dummy', **kwargs)
         lua = """
             local keys = redis.call('keys', ARGV[1])
-            return redis.call('del', unpack(keys))
+            if #keys > 0 then
+                return redis.call('del', unpack(keys))
+            end
         """
         deletion_script = instance.redis_connection.register_script(lua)
         return deletion_script(args=[pattern])
