@@ -18,7 +18,7 @@ check out the [Redis documentation](http://redis.io/documentation).
 Be sure to require the leaderboard library:
 
 ```python
-from leaderboard import Leaderboard
+from leaderboard.leaderboard import Leaderboard
 ```
 
 Create a new leaderboard or attach to an existing leaderboard named 'highscores':

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.0.0 (2014-07-28)
+
+* Add support for tie handling in leaderboards [#28](https://github.com/agoragames/leaderboard-python/pull/28)
+* Re-organized the structure of the leaderboard library so that all the base leaderboard code is no longer in the init.py.
+
 ## 2.8.0 (2014-02-15)
 
 * Allow for customization of member_data namespace [#19](https://github.com/agoragames/leaderboard-python/pull/19)
