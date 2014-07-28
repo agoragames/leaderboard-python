@@ -2,7 +2,6 @@
 
 import unittest
 from test.leaderboard import all_tests
-from leaderboard import Leaderboard
 
 if __name__ == "__main__":
     tests = all_tests()
