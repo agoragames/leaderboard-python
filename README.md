@@ -134,7 +134,7 @@ You can pass various options to the calls `leaders`, `all_leaders`, `around_me`,
 * `with_member_data` - `true` or `false` to return the optional member data.
 * `page_size` - An integer value to change the page size for that call.
 * `members_only` - `true` or `false` to return only the members without their score and rank.
-* `sort_option` - Valid values for `sort_option` are `score` and `rank`.
+* `sort_by` - Valid values for `sort_by` are `score` and `rank`.
 
 ### Conditionally rank a member in the leaderboard
 
