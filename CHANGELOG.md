@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.0.1 (2014-09-04)
+
+* Add Python3 version check to accommodate 2to3 change of itertools.izip_longest [#30](https://github.com/agoragames/leaderboard-python/pull/30)
+
 ## 3.0.0 (2014-07-28)
 
 * Add support for tie handling in leaderboards [#28](https://github.com/agoragames/leaderboard-python/pull/28)
