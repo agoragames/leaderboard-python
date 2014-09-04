@@ -1,12 +1,16 @@
 from redis import StrictRedis, Redis, ConnectionPool
 import math
-from itertools import izip_longest
+import sys
+if sys.version_info.major == 3:
+    from itertools import zip_longest
+else:
+    from itertools import izip_longest as zip_longest
 
 
 def grouper(n, iterable, fillvalue=None):
     "grouper(3, 'ABCDEFG', 'x') --> ABC DEF Gxx"
     args = [iter(iterable)] * n
-    return izip_longest(fillvalue=fillvalue, *args)
+    return zip_longest(fillvalue=fillvalue, *args)
 
 
 class Leaderboard(object):
