@@ -1,3 +1,7 @@
+.Python
+include/
+lib/
+
 *.py[co]
 *.swp
 *.rdb

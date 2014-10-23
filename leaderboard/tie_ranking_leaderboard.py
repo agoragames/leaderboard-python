@@ -1,7 +1,6 @@
-from .leaderboard import Leaderboard
-from redis import StrictRedis, Redis, ConnectionPool
-import math
-from itertools import izip_longest
+from .leaderboard import Leaderboard, grouper
+from redis import Redis
+from redis.exceptions import WatchError
 
 
 class TieRankingLeaderboard(Leaderboard):
@@ -115,6 +114,48 @@ class TieRankingLeaderboard(Leaderboard):
                               score, str(float(score)))
         pipeline.execute()
 
+    def change_score_for_member_in(self, leaderboard_name, member, delta):
+        '''
+        Change the score for a member in the named leaderboard by a delta which can be positive or
+        negative.
+
+        @param leaderboard_name [String] Name of the leaderboard.
+        @param member [String] Member name.
+        @param delta [float] Score change.
+        '''
+        old_score = self.score_for(member)
+
+        pipeline = self.redis_connection.pipeline()
+        while 1:
+            try:
+                pipeline.watch(leaderboard_name)
+                members_at_old_score = pipeline.zrevrangebyscore(
+                    leaderboard_name,
+                    min=old_score,
+                    max=old_score)
+
+                new_score = old_score + delta
+                pipeline.multi()
+                if isinstance(self.redis_connection, Redis):
+                    pipeline.zadd(leaderboard_name, member, new_score)
+                    pipeline.zadd(self._ties_leaderboard_key(leaderboard_name),
+                                  str(float(new_score)), new_score)
+                else:
+                    pipeline.zadd(leaderboard_name, new_score, member)
+                    pipeline.zadd(self._ties_leaderboard_key(leaderboard_name),
+                                  new_score, str(float(new_score)))
+
+                if len(members_at_old_score) == 1:
+                    pipeline.zrem(self._ties_leaderboard_key(leaderboard_name),
+                                  str(float(old_score)))
+
+                pipeline.execute()
+                break
+            except WatchError:
+                continue
+            finally:
+                pipeline.reset()
+
     def remove_member_from(self, leaderboard_name, member):
         '''
         Remove the optional member data for a given member in the named leaderboard.
@@ -214,7 +255,8 @@ class TieRankingLeaderboard(Leaderboard):
 
         @param leaderboard_name [String] Name of the leaderboard.
         @param members [Array] Member names.
-        @param options [Hash] Options to be used when retrieving the page from the named leaderboard.
+        @param options [Hash] Options to be used when retrieving the page from the named
+        leaderboard.
         @return a page of leaders from the named leaderboard for a given list of members.
         '''
         ranks_for_members = []
