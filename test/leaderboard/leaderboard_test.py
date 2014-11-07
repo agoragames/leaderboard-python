@@ -18,7 +18,7 @@ class LeaderboardTest(unittest.TestCase):
         Leaderboard.MEMBER_DATA_KEY = 'member_data'
 
     def test_version(self):
-        Leaderboard.VERSION.should.equal('3.0.1')
+        Leaderboard.VERSION.should.equal('3.1.0')
 
     def test_init_with_defaults(self):
         'name'.should.equal(self.leaderboard.leaderboard_name)

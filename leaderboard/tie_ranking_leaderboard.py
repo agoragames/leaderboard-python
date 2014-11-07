@@ -43,6 +43,31 @@ class TieRankingLeaderboard(Leaderboard):
         pipeline.delete(self._ties_leaderboard_key(leaderboard_name))
         pipeline.execute()
 
+    def change_score_for_member_in(self, leaderboard_name, member, delta):
+        '''
+        Change the score for a member in the named leaderboard by a delta which can be positive or negative.
+
+        @param leaderboard_name [String] Name of the leaderboard.
+        @param member [String] Member name.
+        @param delta [float] Score change.
+        '''
+        previous_score = self.score_for(member)
+        new_score = previous_score + delta
+
+        total_members_at_previous_score = self.redis_connection.zrevrangebyscore(leaderboard_name, previous_score, previous_score)
+
+        pipeline = self.redis_connection.pipeline()
+        if isinstance(self.redis_connection, Redis):
+            pipeline.zadd(leaderboard_name, member, new_score)
+            pipeline.zadd(self._ties_leaderboard_key(leaderboard_name), str(float(new_score)), new_score)
+        else:
+            pipeline.zadd(leaderboard_name, new_score, member)
+            pipeline.zadd(self._ties_leaderboard_key(leaderboard_name), new_score, str(float(new_score)))
+        pipeline.execute()
+
+        if len(total_members_at_previous_score) == 1:
+            self.redis_connection.zrem(self._ties_leaderboard_key(leaderboard_name), str(float(previous_score)))
+
     def rank_member_in(
             self, leaderboard_name, member, score, member_data=None):
         '''
