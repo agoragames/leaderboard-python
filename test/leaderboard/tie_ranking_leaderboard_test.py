@@ -1,8 +1,6 @@
-from redis import Redis, StrictRedis, ConnectionPool
 from leaderboard.tie_ranking_leaderboard import TieRankingLeaderboard
 import unittest
 import time
-import sure
 
 
 class TieRankingLeaderboardTest(unittest.TestCase):
@@ -32,6 +30,17 @@ class TieRankingLeaderboardTest(unittest.TestCase):
         leaders[2]['rank'].should.equal(2)
         leaders[3]['rank'].should.equal(2)
         leaders[4]['rank'].should.equal(3)
+
+    def test_change_score_for(self):
+        self.leaderboard.rank_member('member_1', 50)
+        self.leaderboard.rank_member('member_2', 50)
+        self.leaderboard.rank_member('member_3', 30)
+        self.leaderboard.rank_member('member_4', 30)
+        self.leaderboard.rank_member('member_5', 10)
+        self.leaderboard.change_score_for('member_3', 10)
+        self.leaderboard.rank_for('member_3').should.equal(2)
+        self.leaderboard.rank_for('member_4').should.equal(3)
+        self.leaderboard.score_for('member_3').should.equal(40.0)
 
     def test_correct_rankings_for_leaders_with_different_page_sizes(self):
         self.leaderboard.rank_member('member_1', 50)
