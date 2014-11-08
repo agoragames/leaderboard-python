@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.1.0 (2014-11-07)
+
+* Add support for `change_score_for(...)` in the `TieRankingLeaderboard` class.
+
 ## 3.0.1 (2014-09-04)
 
 * Add Python3 version check to accommodate 2to3 change of itertools.izip_longest [#30](https://github.com/agoragames/leaderboard-python/pull/30)

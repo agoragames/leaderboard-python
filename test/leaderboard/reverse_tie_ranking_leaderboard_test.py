@@ -146,6 +146,30 @@ class ReverseTieRankingLeaderboardTest(unittest.TestCase):
             self.leaderboard.leaderboard_name)
         ttl.should.be.lower_than(11)
 
+    def test_correct_rankings_and_scores_when_using_change_score_for(self):
+        self.leaderboard.rank_member('member_1', 50)
+        self.leaderboard.rank_member('member_2', 50)
+        self.leaderboard.rank_member('member_3', 30)
+        self.leaderboard.rank_member('member_4', 30)
+        self.leaderboard.rank_member('member_5', 10)
+        self.leaderboard.change_score_for('member_3', 10)
+
+        self.leaderboard.rank_for('member_3').should.equal(3)
+        self.leaderboard.rank_for('member_4').should.equal(2)
+        self.leaderboard.score_for('member_3').should.equal(40.0)
+
+    def test_correct_rankings_and_scores_when_using_change_score_for_with_varying_scores(self):
+        self.leaderboard.rank_member('member_1', 5)
+        self.leaderboard.rank_member('member_2', 4)
+        self.leaderboard.rank_member('member_3', 3)
+        self.leaderboard.rank_member('member_4', 2)
+        self.leaderboard.rank_member('member_5', 1)
+        self.leaderboard.change_score_for('member_3', 0.5)
+
+        self.leaderboard.rank_for('member_3').should.equal(3)
+        self.leaderboard.rank_for('member_4').should.equal(2)
+        self.leaderboard.score_for('member_3').should.equal(3.5)
+
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(

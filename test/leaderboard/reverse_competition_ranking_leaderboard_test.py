@@ -90,3 +90,15 @@ class ReverseCompetitionRankingLeaderboardTest(unittest.TestCase):
         self.leaderboard.score_and_rank_for('member_3')['rank'].should.equal(1)
         self.leaderboard.score_and_rank_for('member_1')['rank'].should.equal(2)
         self.leaderboard.score_and_rank_for('member_2')['rank'].should.equal(2)
+
+    def test_correct_rankings_and_scores_when_using_change_score_for(self):
+        self.leaderboard.rank_member('member_1', 50)
+        self.leaderboard.rank_member('member_2', 50)
+        self.leaderboard.rank_member('member_3', 30)
+        self.leaderboard.rank_member('member_4', 30)
+        self.leaderboard.rank_member('member_5', 10)
+        self.leaderboard.change_score_for('member_3', 10)
+
+        self.leaderboard.rank_for('member_3').should.equal(3)
+        self.leaderboard.rank_for('member_4').should.equal(2)
+        self.leaderboard.score_for('member_3').should.equal(40.0)
