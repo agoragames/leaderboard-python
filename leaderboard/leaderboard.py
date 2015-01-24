@@ -579,7 +579,7 @@ class Leaderboard(object):
         else:
             rank_for_member += 1
 
-        return math.ceil(float(rank_for_member) / float(page_size))
+        return int(math.ceil(float(rank_for_member) / float(page_size)))
 
     def percentile_for(self, member):
         '''

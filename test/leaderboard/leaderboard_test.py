@@ -196,11 +196,11 @@ class LeaderboardTest(unittest.TestCase):
     def test_percentile_for(self):
         self.__rank_members_in_leaderboard(13)
 
-        self.leaderboard.percentile_for('member_1').should.eql(0)
-        self.leaderboard.percentile_for('member_2').should.eql(9)
-        self.leaderboard.percentile_for('member_3').should.eql(17)
-        self.leaderboard.percentile_for('member_4').should.eql(25)
-        self.leaderboard.percentile_for('member_12').should.eql(92)
+        self.leaderboard.percentile_for('member_1').should.eql(0.0)
+        self.leaderboard.percentile_for('member_2').should.eql(9.0)
+        self.leaderboard.percentile_for('member_3').should.eql(17.0)
+        self.leaderboard.percentile_for('member_4').should.eql(25.0)
+        self.leaderboard.percentile_for('member_12').should.eql(92.0)
 
     def test_score_for_percentile(self):
         self.__rank_members_in_leaderboard(6)
@@ -264,7 +264,7 @@ class LeaderboardTest(unittest.TestCase):
         leaders = self.leaderboard.leaders(1, with_member_data=True)
         len(leaders).should.equal(5)
         leaders[0]['member'].should.equal('member_5')
-        leaders[0]['member_data'].should.be(
+        leaders[0]['member_data'].should.equal(
             str({'member_name': 'Leaderboard member 5'}))
 
     def test_leaders_return_type(self):
@@ -347,7 +347,7 @@ class LeaderboardTest(unittest.TestCase):
         members = self.leaderboard.members_from_rank_range(1, 26)
         len(members).should.equal(25)
         members[0]['member'].should.eql('member_25')
-        members[0]['score'].should.equal(25)
+        members[0]['score'].should.equal(25.0)
         members[24]['member'].should.eql('member_1')
 
     def test_member_at(self):
@@ -497,7 +497,7 @@ class LeaderboardTest(unittest.TestCase):
         leaders = self.leaderboard.leaders(1, with_member_data=True)
         len(leaders).should.equal(25)
         leaders[0]['member_custom'].should.equal('member_25')
-        leaders[0]['score_custom'].should.equal(25)
+        leaders[0]['score_custom'].should.equal(25.0)
         leaders[0]['rank_custom'].should.equal(1)
         leaders[0]['member_data_custom'].should.equal(
             "{'member_name': 'Leaderboard member 25'}")
