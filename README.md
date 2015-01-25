@@ -27,6 +27,27 @@ Create a new leaderboard or attach to an existing leaderboard named 'highscores'
 highscore_lb = Leaderboard('highscores')
 ```
 
+### Defining leaderboard options
+
+The default options are as follows:
+
+```python
+    DEFAULT_PAGE_SIZE = 25
+    DEFAULT_REDIS_HOST = 'localhost'
+    DEFAULT_REDIS_PORT = 6379
+    DEFAULT_REDIS_DB = 0
+    DEFAULT_MEMBER_DATA_NAMESPACE = 'member_data'
+    DEFAULT_GLOBAL_MEMBER_DATA = False
+    ASC = 'asc'
+    DESC = 'desc'
+    MEMBER_KEY = 'member'
+    MEMBER_DATA_KEY = 'member_data'
+    SCORE_KEY = 'score'
+    RANK_KEY = 'rank'
+```
+
+You would use the option, `order=Leaderboard.ASC`, if you wanted a leaderboard sorted from lowest-to-highest score. You may also set the `order` option on a leaderboard after you have created a new instance of a leaderboard. The various `..._KEY` options above control what data is returned in the hash of leaderboard data from calls such as `leaders` or `around_me`. Finally, the `global_member_data` option allows you to control whether optional member data is per-leaderboard (`False`) or global (`True`).
+
 ### Ranking members in the leaderboard
 
 Add members to your leaderboard using `rank_member`:

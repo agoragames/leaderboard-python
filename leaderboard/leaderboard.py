@@ -14,12 +14,13 @@ def grouper(n, iterable, fillvalue=None):
 
 
 class Leaderboard(object):
-    VERSION = '3.1.0'
+    VERSION = '3.2.0'
     DEFAULT_PAGE_SIZE = 25
     DEFAULT_REDIS_HOST = 'localhost'
     DEFAULT_REDIS_PORT = 6379
     DEFAULT_REDIS_DB = 0
     DEFAULT_MEMBER_DATA_NAMESPACE = 'member_data'
+    DEFAULT_GLOBAL_MEMBER_DATA = False
     ASC = 'asc'
     DESC = 'desc'
     MEMBER_KEY = 'member'
@@ -65,6 +66,9 @@ class Leaderboard(object):
         self.member_data_namespace = self.options.pop(
             'member_data_namespace',
             self.DEFAULT_MEMBER_DATA_NAMESPACE)
+        self.global_member_data = self.options.pop(
+            'global_member_data',
+            self.DEFAULT_GLOBAL_MEMBER_DATA)
 
         self.order = self.options.pop('order', self.DESC).lower()
         if not self.order in [self.ASC, self.DESC]:
@@ -856,6 +860,30 @@ class Leaderboard(object):
         return self._parse_raw_members(
             leaderboard_name, raw_leader_data, **options)
 
+    def top(self, number, **options):
+        '''
+        Retrieve members from the leaderboard within a range from 1 to the number given.
+
+        @param ending_rank [int] Ending rank (inclusive).
+        @param options [Hash] Options to be used when retrieving the data from the leaderboard.
+
+        @return number from the leaderboard that fall within the given rank range.
+        '''
+        return self.top_in(self.leaderboard_name, number, **options)
+
+    def top_in(self, leaderboard_name, number, **options):
+        '''
+        Retrieve members from the named leaderboard within a range from 1 to the number given.
+
+        @param leaderboard_name [String] Name of the leaderboard.
+        @param starting_rank [int] Starting rank (inclusive).
+        @param ending_rank [int] Ending rank (inclusive).
+        @param options [Hash] Options to be used when retrieving the data from the leaderboard.
+
+        @return members from the leaderboard that fall within the given rank range.
+        '''
+        return self.members_from_rank_range_in(leaderboard_name, 1, number, **options)
+
     def member_at(self, position, **options):
         '''
         Retrieve a member at the specified index from the leaderboard.
@@ -1039,7 +1067,10 @@ class Leaderboard(object):
         @param leaderboard_name [String] Name of the leaderboard.
         @return a key in the form of +leaderboard_name:member_data+
         '''
-        return '%s:%s' % (leaderboard_name, self.member_data_namespace)
+        if self.global_member_data is False:
+            return '%s:%s' % (leaderboard_name, self.member_data_namespace)
+        else:
+            return self.member_data_namespace
 
     def _parse_raw_members(
             self, leaderboard_name, members, members_only=False, **options):
