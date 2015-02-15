@@ -18,7 +18,7 @@ class LeaderboardTest(unittest.TestCase):
         Leaderboard.MEMBER_DATA_KEY = 'member_data'
 
     def test_version(self):
-        Leaderboard.VERSION.should.equal('3.1.0')
+        Leaderboard.VERSION.should.equal('3.2.0')
 
     def test_init_with_defaults(self):
         'name'.should.equal(self.leaderboard.leaderboard_name)
@@ -516,6 +516,93 @@ class LeaderboardTest(unittest.TestCase):
         self.leaderboard.redis_connection.exists(
             "name:member_data").should.be.false
         self.leaderboard.redis_connection.exists("name:md").should.be.true
+
+    def test_global_member_data_option(self):
+        self.leaderboard = Leaderboard('name', global_member_data=True)
+        self.__rank_members_in_leaderboard()
+
+        self.leaderboard.redis_connection.exists(
+            "name:member_data").should.be.false
+        self.leaderboard.redis_connection.exists(
+            "member_data").should.be.true
+
+    def test_retrieve_a_given_set_of_members_from_the_leaderboard_in_a_range_from_1_to_the_number_given(self):
+        self.__rank_members_in_leaderboard(26)
+
+        members = self.leaderboard.top(5)
+        len(members).should.equal(5)
+        members[0]['member'].should.equal('member_25')
+        members[0]['score'].should.equal(25.0)
+        members[4]['member'].should.equal('member_21')
+
+        members = self.leaderboard.top(1)
+        len(members).should.equal(1)
+        members[0]['member'].should.equal('member_25')
+
+        members = self.leaderboard.top(26)
+        len(members).should.equal(25)
+        members[0]['member'].should.equal('member_25')
+        members[0]['score'].should.equal(25.0)
+        members[24]['member'].should.equal('member_1')
+
+    def test_retrieve_a_given_set_of_members_from_the_named_leaderboard_in_a_range_from_1_to_the_number_given(self):
+        self.__rank_members_in_leaderboard(26)
+
+        members = self.leaderboard.top_in('name', 5)
+        len(members).should.equal(5)
+        members[0]['member'].should.equal('member_25')
+        members[0]['score'].should.equal(25.0)
+        members[4]['member'].should.equal('member_21')
+
+        members = self.leaderboard.top_in('name', 1)
+        len(members).should.equal(1)
+        members[0]['member'].should.equal('member_25')
+
+        members = self.leaderboard.top_in('name', 26)
+        len(members).should.equal(25)
+        members[0]['member'].should.equal('member_25')
+        members[0]['score'].should.equal(25.0)
+        members[24]['member'].should.equal('member_1')
+
+    def test_retrieve_a_given_set_of_members_from_the_leaderboard_in_a_range_from_1_to_the_number_given_with_sort_option_ASC(self):
+        self.leaderboard.order = Leaderboard.ASC
+        self.__rank_members_in_leaderboard(26)
+
+        members = self.leaderboard.top(5)
+        len(members).should.equal(5)
+        members[0]['member'].should.equal('member_1')
+        members[0]['score'].should.equal(1.0)
+        members[4]['member'].should.equal('member_5')
+
+        members = self.leaderboard.top(1)
+        len(members).should.equal(1)
+        members[0]['member'].should.equal('member_1')
+
+        members = self.leaderboard.top(26)
+        len(members).should.equal(25)
+        members[0]['member'].should.equal('member_1')
+        members[0]['score'].should.equal(1.0)
+        members[24]['member'].should.equal('member_25')
+
+    def test_retrieve_a_given_set_of_members_from_the_named_leaderboard_in_a_range_from_1_to_the_number_given_with_sort_option_ASC(self):
+        self.leaderboard.order = Leaderboard.ASC
+        self.__rank_members_in_leaderboard(26)
+
+        members = self.leaderboard.top_in('name', 5)
+        len(members).should.equal(5)
+        members[0]['member'].should.equal('member_1')
+        members[0]['score'].should.equal(1.0)
+        members[4]['member'].should.equal('member_5')
+
+        members = self.leaderboard.top_in('name', 1)
+        len(members).should.equal(1)
+        members[0]['member'].should.equal('member_1')
+
+        members = self.leaderboard.top_in('name', 26)
+        len(members).should.equal(25)
+        members[0]['member'].should.equal('member_1')
+        members[0]['score'].should.equal(1.0)
+        members[24]['member'].should.equal('member_25')
 
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.2.0 (unreleased)
+
+* Add `global_member_data` option that allows multiple leaderboards to share the same set of member_data. [#51](https://github.com/agoragames/leaderboard/pull/51) for original pull request from the Ruby leaderboard library.
+* Add `top` helper method. [#50](https://github.com/agoragames/leaderboard/pull/50) for the original pull request from the Ruby leaderboard library.
+
 ## 3.1.0 (2014-11-07)
 
 * Add support for `change_score_for(...)` in the `TieRankingLeaderboard` class.
