@@ -170,6 +170,21 @@ class ReverseTieRankingLeaderboardTest(unittest.TestCase):
         self.leaderboard.rank_for('member_4').should.equal(2)
         self.leaderboard.score_for('member_3').should.equal(3.5)
 
+    def test_it_should_output_the_correct_rank_when_initial_score_is_0_and_then_later_scores_are_ties(self):
+        self.leaderboard.rank_members(['member_1', 0, 'member_2', 0])
+        self.leaderboard.rank_for('member_1').should.equal(1)
+        self.leaderboard.rank_for('member_2').should.equal(1)
+        self.leaderboard.rank_members(['member_1', 0, 'member_2', 0])
+        self.leaderboard.rank_for('member_1').should.equal(1)
+        self.leaderboard.rank_for('member_2').should.equal(1)
+        self.leaderboard.rank_members(['member_1', 1, 'member_2', 1])
+        self.leaderboard.rank_for('member_1').should.equal(1)
+        self.leaderboard.rank_for('member_2').should.equal(1)
+        self.leaderboard.rank_members(['member_1', 1, 'member_2', 1, 'member_3', 4])
+        self.leaderboard.rank_for('member_3').should.equal(2)
+        self.leaderboard.rank_for('member_1').should.equal(1)
+        self.leaderboard.rank_for('member_2').should.equal(1)
+
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(
