@@ -281,6 +281,9 @@ class TieRankingLeaderboard(Leaderboard):
                     self._ties_leaderboard_key(leaderboard_name), str(data[self.SCORE_KEY]))
             if data[self.RANK_KEY] is not None:
                 data[self.RANK_KEY] += 1
+            else:
+                if not options.get('include_missing', True):
+                    continue
 
             if ('with_member_data' in options) and (True == options['with_member_data']):
                 data[

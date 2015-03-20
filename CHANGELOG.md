@@ -3,6 +3,8 @@
 ## 3.3.0 (unreleased)
 
 * Allow member data to be set in the `change_score_for(...)` method.
+* Add `include_missing` option in leaderboard request options to change
+  whether or not to include missing members in the result.
 
 ## 3.2.0 (2015-02-15)
 

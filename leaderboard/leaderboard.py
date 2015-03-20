@@ -1013,6 +1013,9 @@ class Leaderboard(object):
             rank = responses[index * 2]
             if rank is not None:
                 rank += 1
+            else:
+                if not options.get('include_missing', True):
+                    continue
             data[self.RANK_KEY] = rank
             score = responses[index * 2 + 1]
             if score is not None:

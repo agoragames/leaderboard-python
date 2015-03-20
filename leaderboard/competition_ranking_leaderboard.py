@@ -96,14 +96,24 @@ class CompetitionRankingLeaderboard(Leaderboard):
             score = responses[index * 2 + 1]
             if score is not None:
                 score = float(score)
+            else:
+                if not options.get('include_missing', True):
+                    continue
+
             data[self.SCORE_KEY] = score
 
             if self.order == self.ASC:
-                data[self.RANK_KEY] = self.redis_connection.zcount(
-                    leaderboard_name, '-inf', "(%s" % str(float(data[self.SCORE_KEY])))
+                try:
+                    data[self.RANK_KEY] = self.redis_connection.zcount(
+                        leaderboard_name, '-inf', "(%s" % str(float(data[self.SCORE_KEY])))
+                except:
+                    data[self.RANK_KEY] = None
             else:
-                data[self.RANK_KEY] = self.redis_connection.zcount(
-                    leaderboard_name, "(%s" % str(float(data[self.SCORE_KEY])), '+inf')
+                try:
+                    data[self.RANK_KEY] = self.redis_connection.zcount(
+                        leaderboard_name, "(%s" % str(float(data[self.SCORE_KEY])), '+inf')
+                except:
+                    data[self.RANK_KEY] = None
             if data[self.RANK_KEY] is not None:
                 data[self.RANK_KEY] += 1
 

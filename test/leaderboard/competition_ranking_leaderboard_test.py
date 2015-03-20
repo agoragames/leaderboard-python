@@ -115,6 +115,24 @@ class CompetitionRankingLeaderboardTest(unittest.TestCase):
         members[0]['score'].should.equal(25.0)
         members[24]['member'].should.equal('member_1')
 
+    def test_allow_you_to_include_or_exclude_missing_members_using_the_include_missing_option(self):
+        self.__rank_members_in_leaderboard(26)
+
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_1', 'member_15', 'member_25', 'member_200'])
+        len(leaders).should.equal(4)
+        leaders[0]['member'].should.equal('member_1')
+        leaders[1]['member'].should.equal('member_15')
+        leaders[2]['member'].should.equal('member_25')
+        leaders[3]['member'].should.equal('member_200')
+
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_1', 'member_15', 'member_25', 'member_200'], include_missing=False)
+        len(leaders).should.equal(3)
+        leaders[0]['member'].should.equal('member_1')
+        leaders[1]['member'].should.equal('member_15')
+        leaders[2]['member'].should.equal('member_25')
+
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(
