@@ -1,4 +1,5 @@
 from .leaderboard import Leaderboard
+from .leaderboard import grouper
 from redis import StrictRedis, Redis, ConnectionPool
 import math
 from itertools import izip_longest
@@ -86,6 +87,11 @@ class TieRankingLeaderboard(Leaderboard):
         @param score [float] Member score.
         @param member_data [String] Optional member data.
         '''
+        member_score = None or self.redis_connection.zscore(leaderboard_name, member)
+        can_delete_score = member_score is not None and\
+            (len(self.members_from_score_range_in(leaderboard_name, member_score, member_score)) == 1) and\
+            member_score != score
+
         pipeline = self.redis_connection.pipeline()
         if isinstance(self.redis_connection, Redis):
             pipeline.zadd(leaderboard_name, member, score)
@@ -95,6 +101,9 @@ class TieRankingLeaderboard(Leaderboard):
             pipeline.zadd(leaderboard_name, score, member)
             pipeline.zadd(self._ties_leaderboard_key(leaderboard_name),
                           score, str(float(score)))
+        if can_delete_score:
+            pipeline.zrem(self._ties_leaderboard_key(leaderboard_name),
+                          str(float(member_score)))
         if member_data:
             pipeline.hset(
                 self._member_data_key(leaderboard_name),
@@ -112,22 +121,8 @@ class TieRankingLeaderboard(Leaderboard):
         @param score [float] Member score.
         @param member_data [String] Optional member data.
         '''
-        pipeline = self.redis_connection.pipeline()
         for leaderboard_name in leaderboards:
-            if isinstance(self.redis_connection, Redis):
-                pipeline.zadd(leaderboard_name, member, score)
-                pipeline.zadd(self._ties_leaderboard_key(leaderboard_name),
-                              str(float(score)), score)
-            else:
-                pipeline.zadd(leaderboard_name, score, member)
-                pipeline.zadd(self._ties_leaderboard_key(leaderboard_name),
-                              score, str(float(score)))
-            if member_data:
-                pipeline.hset(
-                    self._member_data_key(leaderboard_name),
-                    member,
-                    member_data)
-        pipeline.execute()
+            self.rank_member_in(leaderboard, member, score, member_data)
 
     def rank_members_in(self, leaderboard_name, members_and_scores):
         '''
@@ -136,17 +131,8 @@ class TieRankingLeaderboard(Leaderboard):
         @param leaderboard_name [String] Name of the leaderboard.
         @param members_and_scores [Array] Variable list of members and scores.
         '''
-        pipeline = self.redis_connection.pipeline()
         for member, score in grouper(2, members_and_scores):
-            if isinstance(self.redis_connection, Redis):
-                pipeline.zadd(leaderboard_name, member, score)
-                pipeline.zadd(self._ties_leaderboard_key(leaderboard_name),
-                              str(float(score)), score)
-            else:
-                pipeline.zadd(leaderboard_name, score, member)
-                pipeline.zadd(self._ties_leaderboard_key(leaderboard_name),
-                              score, str(float(score)))
-        pipeline.execute()
+            self.rank_member_in(leaderboard_name, member, score)
 
     def remove_member_from(self, leaderboard_name, member):
         '''
@@ -155,8 +141,8 @@ class TieRankingLeaderboard(Leaderboard):
         @param leaderboard_name [String] Name of the leaderboard.
         @param member [String] Member name.
         '''
-        member_score = self.redis_connection.zscore(
-            leaderboard_name, member) or None
+        member_score = None or self.redis_connection.zscore(
+            leaderboard_name, member)
         can_delete_score = member_score and len(
             self.members_from_score_range_in(leaderboard_name, member_score, member_score)) == 1
 
