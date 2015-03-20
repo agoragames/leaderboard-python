@@ -1,7 +1,8 @@
 # CHANGELOG
 
-## 3.3.0 (unreleased)
+## 3.3.0 (2015-03-20)
 
+* Similar fix to one found in the [Ruby leaderboard](https://github.com/agoragames/leaderboard) library. Fixes TieRankingLeaderboard doesn't rank if the score is 0.
 * Allow member data to be set in the `change_score_for(...)` method.
 * Add `include_missing` option in leaderboard request options to change
   whether or not to include missing members in the result.
