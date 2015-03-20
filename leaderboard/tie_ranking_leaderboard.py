@@ -43,18 +43,21 @@ class TieRankingLeaderboard(Leaderboard):
         pipeline.delete(self._ties_leaderboard_key(leaderboard_name))
         pipeline.execute()
 
-    def change_score_for_member_in(self, leaderboard_name, member, delta):
+    def change_score_for_member_in(self, leaderboard_name, member, delta, member_data=None):
         '''
         Change the score for a member in the named leaderboard by a delta which can be positive or negative.
 
         @param leaderboard_name [String] Name of the leaderboard.
         @param member [String] Member name.
         @param delta [float] Score change.
+        @param member_data [String] Optional member data.
         '''
         previous_score = self.score_for(member)
-        new_score = previous_score + delta
+        new_score = (previous_score or 0) + delta
 
-        total_members_at_previous_score = self.redis_connection.zrevrangebyscore(leaderboard_name, previous_score, previous_score)
+        total_members_at_previous_score = []
+        if previous_score is not None:
+            total_members_at_previous_score = self.redis_connection.zrevrangebyscore(leaderboard_name, previous_score, previous_score)
 
         pipeline = self.redis_connection.pipeline()
         if isinstance(self.redis_connection, Redis):
@@ -63,6 +66,11 @@ class TieRankingLeaderboard(Leaderboard):
         else:
             pipeline.zadd(leaderboard_name, new_score, member)
             pipeline.zadd(self._ties_leaderboard_key(leaderboard_name), new_score, str(float(new_score)))
+        if member_data:
+            pipeline.hset(
+                self._member_data_key(leaderboard_name),
+                member,
+                member_data)
         pipeline.execute()
 
         if len(total_members_at_previous_score) == 1:

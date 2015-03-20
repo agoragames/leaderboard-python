@@ -478,24 +478,33 @@ class Leaderboard(object):
             self.RANK_KEY: self.rank_for_in(leaderboard_name, member)
         }
 
-    def change_score_for(self, member, delta):
+    def change_score_for(self, member, delta, member_data=None):
         '''
         Change the score for a member in the leaderboard by a score delta which can be positive or negative.
 
         @param member [String] Member name.
         @param delta [float] Score change.
+        @param member_data [String] Optional member data.
         '''
-        self.change_score_for_member_in(self.leaderboard_name, member, delta)
+        self.change_score_for_member_in(self.leaderboard_name, member, delta, member_data)
 
-    def change_score_for_member_in(self, leaderboard_name, member, delta):
+    def change_score_for_member_in(self, leaderboard_name, member, delta, member_data=None):
         '''
         Change the score for a member in the named leaderboard by a delta which can be positive or negative.
 
         @param leaderboard_name [String] Name of the leaderboard.
         @param member [String] Member name.
         @param delta [float] Score change.
+        @param member_data [String] Optional member data.
         '''
-        self.redis_connection.zincrby(leaderboard_name, member, delta)
+        pipeline = self.redis_connection.pipeline()
+        pipeline.zincrby(leaderboard_name, member, delta)
+        if member_data:
+            pipeline.hset(
+                self._member_data_key(leaderboard_name),
+                member,
+                member_data)
+        pipeline.execute()
 
     def remove_members_in_score_range(self, min_score, max_score):
         '''

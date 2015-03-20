@@ -169,6 +169,11 @@ class TieRankingLeaderboardTest(unittest.TestCase):
         self.leaderboard.rank_for('member_4').should.equal(4)
         self.leaderboard.score_for('member_3').should.equal(3.5)
 
+    def test_change_score_and_member_data_for_a_member(self):
+        self.leaderboard.change_score_for('member_1', 10, 'optional-data')
+        self.leaderboard.rank_for('member_1').should.equal(1)
+        self.leaderboard.member_data_for('member_1').should.equal('optional-data')
+
     def test_retrieve_a_given_set_of_members_from_the_leaderboard_in_a_range_from_1_to_the_number_given(self):
         self.__rank_members_in_leaderboard(26)
 

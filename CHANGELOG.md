@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.3.0 (unreleased)
+
+* Allow member data to be set in the `change_score_for(...)` method.
+
 ## 3.2.0 (2015-02-15)
 
 * Add `global_member_data` option that allows multiple leaderboards to share the same set of member_data. [#51](https://github.com/agoragames/leaderboard/pull/51) for original pull request from the Ruby leaderboard library.
