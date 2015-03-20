@@ -127,6 +127,11 @@ class LeaderboardTest(unittest.TestCase):
         self.leaderboard.rank_for('member_1').should.equal(1)
         self.leaderboard.score_for('member_1').should.equal(100.0)
 
+    def test_change_score_for_and_member_data_for_a_member(self):
+        self.leaderboard.change_score_for('member_1', 5, 'optional-data')
+        self.leaderboard.score_for('member_1').should.equal(5.0)
+        self.leaderboard.member_data_for('member_1').should.equal('optional-data')
+
     def test_score_and_rank_for(self):
         self.__rank_members_in_leaderboard()
         score_and_rank = self.leaderboard.score_and_rank_for('member_3')
