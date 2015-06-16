@@ -75,16 +75,22 @@ class Leaderboard(object):
             raise ValueError(
                 "%s is not one of [%s]" % (self.order, ",".join([self.ASC, self.DESC])))
 
-        connection = self.options.pop('connection', None)
-        if isinstance(connection, (StrictRedis, Redis)):
-            self.options['connection_pool'] = connection.connection_pool
-        if 'connection_pool' not in self.options:
-            self.options['connection_pool'] = self.pool(
-                self.options.pop('host', self.DEFAULT_REDIS_HOST),
-                self.options.pop('port', self.DEFAULT_REDIS_PORT),
-                self.options.pop('db', self.DEFAULT_REDIS_DB)
-            )
-        self.redis_connection = Redis(**self.options)
+        redis_connection = self.options.pop('redis_connection', None)
+        if redis_connection:
+            # allow the developer to pass a raw redis connection and 
+            # we will use it directly instead of creating a new one
+            self.redis_connection = redis_connection
+        else:
+            connection = self.options.pop('connection', None)
+            if isinstance(connection, (StrictRedis, Redis)):
+                self.options['connection_pool'] = connection.connection_pool
+            if 'connection_pool' not in self.options:
+                self.options['connection_pool'] = self.pool(
+                    self.options.pop('host', self.DEFAULT_REDIS_HOST),
+                    self.options.pop('port', self.DEFAULT_REDIS_PORT),
+                    self.options.pop('db', self.DEFAULT_REDIS_DB)
+                )
+            self.redis_connection = Redis(**self.options)
 
     def delete_leaderboard(self):
         '''
