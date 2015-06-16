@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.4.0 (2015-06-16)
+
+* Allow a Redis connection to be passed in the Leaderboard initializer using the `redis_connection` option.
+
 ## 3.3.0 (2015-03-20)
 
 * Similar fix to one found in the [Ruby leaderboard](https://github.com/agoragames/leaderboard) library. Fixes TieRankingLeaderboard doesn't rank if the score is 0.
