@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.5.0 (2015-12-11)
+
+* Allow options to be passed down to the connection pool.
+
 ## 3.4.0 (2015-06-16)
 
 * Allow a Redis connection to be passed in the Leaderboard initializer using the `redis_connection` option.

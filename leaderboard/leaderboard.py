@@ -14,13 +14,14 @@ def grouper(n, iterable, fillvalue=None):
 
 
 class Leaderboard(object):
-    VERSION = '3.4.0'
+    VERSION = '3.5.0'
     DEFAULT_PAGE_SIZE = 25
     DEFAULT_REDIS_HOST = 'localhost'
     DEFAULT_REDIS_PORT = 6379
     DEFAULT_REDIS_DB = 0
     DEFAULT_MEMBER_DATA_NAMESPACE = 'member_data'
     DEFAULT_GLOBAL_MEMBER_DATA = False
+    DEFAULT_POOLS = {}
     ASC = 'asc'
     DESC = 'desc'
     MEMBER_KEY = 'member'
@@ -29,7 +30,7 @@ class Leaderboard(object):
     RANK_KEY = 'rank'
 
     @classmethod
-    def pool(self, host, port, db, pools={}):
+    def pool(self, host, port, db, pools={}, **options):
         '''
         Fetch a redis conenction pool for the unique combination of host
         and port. Will create a new one if there isn't one already.
@@ -37,7 +38,7 @@ class Leaderboard(object):
         key = (host, port, db)
         rval = pools.get(key)
         if not isinstance(rval, ConnectionPool):
-            rval = ConnectionPool(host=host, port=port, db=db)
+            rval = ConnectionPool(host=host, port=port, db=db, **options)
             pools[key] = rval
 
         return rval
@@ -77,7 +78,7 @@ class Leaderboard(object):
 
         redis_connection = self.options.pop('redis_connection', None)
         if redis_connection:
-            # allow the developer to pass a raw redis connection and 
+            # allow the developer to pass a raw redis connection and
             # we will use it directly instead of creating a new one
             self.redis_connection = redis_connection
         else:
@@ -88,7 +89,9 @@ class Leaderboard(object):
                 self.options['connection_pool'] = self.pool(
                     self.options.pop('host', self.DEFAULT_REDIS_HOST),
                     self.options.pop('port', self.DEFAULT_REDIS_PORT),
-                    self.options.pop('db', self.DEFAULT_REDIS_DB)
+                    self.options.pop('db', self.DEFAULT_REDIS_DB),
+                    self.options.pop('pools', self.DEFAULT_POOLS),
+                    **self.options
                 )
             self.redis_connection = Redis(**self.options)
 
