@@ -76,6 +76,7 @@ class CompetitionRankingLeaderboard(Leaderboard):
         @return a page of leaders from the named leaderboard for a given list of members.
         '''
         ranks_for_members = []
+        scores = []
 
         pipeline = self.redis_connection.pipeline()
 
@@ -102,28 +103,15 @@ class CompetitionRankingLeaderboard(Leaderboard):
 
             data[self.SCORE_KEY] = score
 
-            if self.order == self.ASC:
-                try:
-                    data[self.RANK_KEY] = self.redis_connection.zcount(
-                        leaderboard_name, '-inf', "(%s" % str(float(data[self.SCORE_KEY])))
-                except:
-                    data[self.RANK_KEY] = None
-            else:
-                try:
-                    data[self.RANK_KEY] = self.redis_connection.zcount(
-                        leaderboard_name, "(%s" % str(float(data[self.SCORE_KEY])), '+inf')
-                except:
-                    data[self.RANK_KEY] = None
-            if data[self.RANK_KEY] is not None:
-                data[self.RANK_KEY] += 1
-
-            if ('with_member_data' in options) and (True == options['with_member_data']):
-                data[
-                    self.MEMBER_DATA_KEY] = self.member_data_for_in(
-                    leaderboard_name,
-                    member)
-
             ranks_for_members.append(data)
+            scores.append(data[self.SCORE_KEY])
+
+        for index, rank in enumerate(self.__rankings_for_members_having_scores_in(leaderboard_name, members, scores)):
+            ranks_for_members[index][self.RANK_KEY] = rank
+
+        if ('with_member_data' in options) and (True == options['with_member_data']):
+            for index, member_data in enumerate(self.members_data_for_in(leaderboard_name, members)):
+                ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
 
         if 'sort_by' in options:
             if self.RANK_KEY == options['sort_by']:
@@ -138,3 +126,28 @@ class CompetitionRankingLeaderboard(Leaderboard):
                         self.SCORE_KEY])
 
         return ranks_for_members
+
+    def __up_rank(self, rank):
+        if rank is not None:
+            return rank + 1
+        else:
+            return None
+
+    def __rankings_for_members_having_scores_in(self, leaderboard_name, members, scores):
+        pipeline = self.redis_connection.pipeline()
+
+        for index, member in enumerate(members):
+            if self.order == self.ASC:
+                try:
+                    pipeline.zcount(leaderboard_name, '-inf', "(%s" % str(float(scores[index])))
+                except:
+                    None
+            else:
+                try:
+                    pipeline.zcount(leaderboard_name, "(%s" % str(float(scores[index])), '+inf')
+                except:
+                    None
+
+        responses = pipeline.execute()
+
+        return [self.__up_rank(response) for response in responses]

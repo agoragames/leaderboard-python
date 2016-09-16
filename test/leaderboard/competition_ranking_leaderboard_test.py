@@ -27,6 +27,25 @@ class CompetitionRankingLeaderboardTest(unittest.TestCase):
         leaders[3]['rank'].should.equal(3)
         leaders[4]['rank'].should.equal(5)
 
+    def test_leaders_with_optional_member_data(self):
+        self.leaderboard.rank_member('member_1', 50)
+        self.leaderboard.rank_member('member_2', 50)
+        self.leaderboard.rank_member('member_3', 30)
+        self.leaderboard.rank_member('member_4', 30)
+        self.leaderboard.rank_member('member_5', 10, 'member_5')
+
+        leaders = self.leaderboard.leaders(1, with_member_data=True)
+        leaders[0]['rank'].should.equal(1)
+        leaders[0]['member_data'].should.equal(None)
+        leaders[1]['rank'].should.equal(1)
+        leaders[1]['member_data'].should.equal(None)
+        leaders[2]['rank'].should.equal(3)
+        leaders[2]['member_data'].should.equal(None)
+        leaders[3]['rank'].should.equal(3)
+        leaders[3]['member_data'].should.equal(None)
+        leaders[4]['rank'].should.equal(5)
+        leaders[4]['member_data'].should.equal('member_5')
+
     def test_correct_rankings_for_leaders_with_different_page_sizes(self):
         self.leaderboard.rank_member('member_1', 50)
         self.leaderboard.rank_member('member_2', 50)

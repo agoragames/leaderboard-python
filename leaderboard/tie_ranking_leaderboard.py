@@ -271,13 +271,11 @@ class TieRankingLeaderboard(Leaderboard):
                 if not options.get('include_missing', True):
                     continue
 
-            if ('with_member_data' in options) and (True == options['with_member_data']):
-                data[
-                    self.MEMBER_DATA_KEY] = self.member_data_for_in(
-                    leaderboard_name,
-                    member)
-
             ranks_for_members.append(data)
+
+        if ('with_member_data' in options) and (True == options['with_member_data']):
+            for index, member_data in enumerate(self.members_data_for_in(leaderboard_name, members)):
+                ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
 
         if 'sort_by' in options:
             if self.RANK_KEY == options['sort_by']:
