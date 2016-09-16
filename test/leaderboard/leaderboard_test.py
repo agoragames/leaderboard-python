@@ -364,6 +364,7 @@ class LeaderboardTest(unittest.TestCase):
         self.leaderboard.member_at(51).should.equal(None)
         self.leaderboard.member_at(1, with_member_data=True)['member_data'].should.eql(
             str({'member_name': 'Leaderboard member 50'}))
+        self.leaderboard.member_at(-5).should.equal(None)
 
     def test_around_me(self):
         self.__rank_members_in_leaderboard(

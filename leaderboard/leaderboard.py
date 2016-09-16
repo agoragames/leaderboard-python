@@ -921,7 +921,7 @@ class Leaderboard(object):
         @param options [Hash] Options to be used when retrieving the member from the named leaderboard.
         @return a page of leaders from the named leaderboard.
         '''
-        if position <= self.total_members_in(leaderboard_name):
+        if position > 0 and position <= self.total_members_in(leaderboard_name):
             page_size = options.get('page_size', self.page_size)
             current_page = math.ceil(float(position) / float(page_size))
             offset = (position - 1) % page_size
