@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.6.0 (2016-09-16)
+
+* Guard against an out of bounds index in `member_at`
+
 ## 3.5.0 (2015-12-11)
 
 * Allow options to be passed down to the connection pool.

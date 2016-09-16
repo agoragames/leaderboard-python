@@ -262,5 +262,5 @@ Unofficially supported (they need some feature parity love):
 
 ## Copyright
 
-Copyright (c) 2011-2015 Ola Mork, David Czarnecki. See LICENSE.txt for further details.
+Copyright (c) 2011-2016 Ola Mork, David Czarnecki. See LICENSE.txt for further details.
 
