@@ -2,6 +2,8 @@
 
 ## 3.6.0 (2016-09-16)
 
+* More pipelining as per Ruby library, [#58](https://github.com/agoragames/leaderboard/pull/58).
+  Also adds `members_data_for(...) and `members_data_for_in(...)` methods.
 * Guard against an out of bounds index in `member_at`
 
 ## 3.5.0 (2015-12-11)
