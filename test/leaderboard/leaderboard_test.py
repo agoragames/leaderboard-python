@@ -61,6 +61,12 @@ class LeaderboardTest(unittest.TestCase):
         self.leaderboard.member_data_for('member_1').should.eql(
             str({'member_name': 'Leaderboard member 1'}))
 
+    def test_members_data_for(self):
+        self.__rank_members_in_leaderboard()
+        members_data = self.leaderboard.members_data_for(['member_1', 'member_3'])
+        members_data[0].should.eql(str({'member_name': 'Leaderboard member 1'}))
+        members_data[1].should.eql(str({'member_name': 'Leaderboard member 3'}))
+
     def test_update_member_data(self):
         self.__rank_members_in_leaderboard()
         self.leaderboard.update_member_data(

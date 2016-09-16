@@ -264,6 +264,26 @@ class Leaderboard(object):
         return self.redis_connection.hget(
             self._member_data_key(leaderboard_name), member)
 
+    def members_data_for(self, members):
+        '''
+        Retrieve the optional member data for a given list of members in the leaderboard.
+
+        @param members [Array] Member names.
+        @return Array of strings of optional member data.
+        '''
+        return self.members_data_for_in(self.leaderboard_name, members)
+
+    def members_data_for_in(self, leaderboard_name, members):
+        '''
+        Retrieve the optional member data for a given list of members in the named leaderboard.
+
+        @param leaderboard_name [String] Name of the leaderboard.
+        @param members [Array] Member names.
+        @return Array of strings of optional member data.
+        '''
+        return self.redis_connection.hmget(
+            self._member_data_key(leaderboard_name), members)
+
     def update_member_data(self, member, member_data):
         '''
         Update the optional member data for a given member in the leaderboard.
