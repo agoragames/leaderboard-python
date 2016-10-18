@@ -1,7 +1,6 @@
 from .leaderboard import Leaderboard
 from redis import StrictRedis, Redis, ConnectionPool
 import math
-from itertools import izip_longest
 
 
 class CompetitionRankingLeaderboard(Leaderboard):
