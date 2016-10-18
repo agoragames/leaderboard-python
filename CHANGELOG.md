@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 3.6.1 (2016-10-18)
+
+* Remove `izip_longest` import where unneeded. [#44](https://github.com/agoragames/leaderboard-python/pull/44)
+
 ## 3.6.0 (2016-09-16)
 
 * More pipelining as per Ruby library, [#58](https://github.com/agoragames/leaderboard/pull/58).
