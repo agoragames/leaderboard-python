@@ -2,7 +2,6 @@ from .leaderboard import Leaderboard
 from .leaderboard import grouper
 from redis import StrictRedis, Redis, ConnectionPool
 import math
-from itertools import izip_longest
 
 
 class TieRankingLeaderboard(Leaderboard):
