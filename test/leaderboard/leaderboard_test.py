@@ -634,6 +634,11 @@ class LeaderboardTest(unittest.TestCase):
         leaders[1]['member'].should.equal('member_15')
         leaders[2]['member'].should.equal('member_25')
 
+    def test_total_scores_in(self):
+        self.__rank_members_in_leaderboard(26)
+
+        self.leaderboard.total_scores().should.equal(325.0)
+
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(

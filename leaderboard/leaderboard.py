@@ -411,6 +411,23 @@ class Leaderboard(object):
         return self.redis_connection.zcount(
             leaderboard_name, min_score, max_score)
 
+    def total_scores(self):
+        '''
+        Sum of scores for all members in the leaderboard.
+
+        @return Sum of scores for all members in the leaderboard.
+        '''
+        return self.total_scores_in(self.leaderboard_name)
+
+    def total_scores_in(self, leaderboard_name):
+        '''
+        Sum of scores for all members in the named leaderboard.
+
+        @param leaderboard_name Name of the leaderboard.
+        @return Sum of scores for all members in the named leaderboard.
+        '''
+        return sum([leader[self.SCORE_KEY] for leader in self.all_leaders_from(self.leaderboard_name)])
+
     def check_member(self, member):
         '''
         Check to see if a member exists in the leaderboard.
