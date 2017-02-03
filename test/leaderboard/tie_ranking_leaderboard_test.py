@@ -211,6 +211,10 @@ class TieRankingLeaderboardTest(unittest.TestCase):
         leaders[1]['member'].should.equal('member_15')
         leaders[2]['member'].should.equal('member_25')
 
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_200'], include_missing=False, with_member_data=True)
+        len(leaders).should.be(0)
+
     def test_it_should_output_the_correct_rank_when_initial_score_is_0_and_then_later_scores_are_ties(self):
         self.leaderboard.rank_members(['member_1', 0, 'member_2', 0])
         self.leaderboard.rank_for('member_1').should.equal(1)
