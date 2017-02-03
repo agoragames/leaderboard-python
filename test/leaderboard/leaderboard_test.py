@@ -308,6 +308,10 @@ class LeaderboardTest(unittest.TestCase):
         leaders[1]['member'].should.equal('member_15')
         leaders[2]['member'].should.equal('member_25')
 
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_200'], include_missing=False, with_member_data=True)
+        len(leaders).should.be(0)
+
     def test_ranked_in_list_with_unknown_member(self):
         self.__rank_members_in_leaderboard(27)
         leaders = self.leaderboard.ranked_in_list(['jones'])

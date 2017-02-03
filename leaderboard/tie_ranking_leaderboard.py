@@ -274,7 +274,10 @@ class TieRankingLeaderboard(Leaderboard):
 
         if ('with_member_data' in options) and (True == options['with_member_data']):
             for index, member_data in enumerate(self.members_data_for_in(leaderboard_name, members)):
-                ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
+                try:
+                    ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
+                except:
+                    pass
 
         if 'sort_by' in options:
             if self.RANK_KEY == options['sort_by']:
