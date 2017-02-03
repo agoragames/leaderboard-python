@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.7.0 (2017-02-03)
+
+* Fixed an error with the `ranked_in_list` method when using certain options [#46](https://github.com/agoragames/leaderboard-python/pull/46)
+* Added `total_scores` method [#45](https://github.com/agoragames/leaderboard-python/pull/45)
+
 ## 3.6.1 (2016-10-18)
 
 * Remove `izip_longest` import where unneeded. [#44](https://github.com/agoragames/leaderboard-python/pull/44)
