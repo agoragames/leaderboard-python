@@ -1,3 +1,5 @@
+from __future__ import division
+
 from redis import StrictRedis, Redis, ConnectionPool
 import math
 import sys
@@ -1004,7 +1006,7 @@ class Leaderboard(object):
 
         page_size = options.get('page_size', self.page_size)
 
-        starting_offset = reverse_rank_for_member - (page_size / 2)
+        starting_offset = reverse_rank_for_member - (page_size // 2)
         if starting_offset < 0:
             starting_offset = 0
 
