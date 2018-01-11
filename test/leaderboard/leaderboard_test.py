@@ -8,7 +8,7 @@ import sure
 class LeaderboardTest(unittest.TestCase):
 
     def setUp(self):
-        self.leaderboard = Leaderboard('name')
+        self.leaderboard = Leaderboard('name', decode_responses=True)
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()
@@ -22,7 +22,7 @@ class LeaderboardTest(unittest.TestCase):
 
     def test_init_with_defaults(self):
         'name'.should.equal(self.leaderboard.leaderboard_name)
-        len(self.leaderboard.options).should.be(1)
+        len(self.leaderboard.options).should.be(2)
         self.leaderboard.options['connection_pool'].should.be.a(ConnectionPool)
         self.leaderboard.redis_connection.should.be.a(Redis)
         self.leaderboard.DEFAULT_PAGE_SIZE.should.equal(
@@ -388,17 +388,16 @@ class LeaderboardTest(unittest.TestCase):
             1)
 
         leaders_around_me = self.leaderboard.around_me('member_30')
-        (len(leaders_around_me) /
-         2).should.equal(self.leaderboard.page_size /
-                         2)
+        (len(leaders_around_me) // 2).should.equal(self.leaderboard.page_size // 2)
 
         leaders_around_me = self.leaderboard.around_me('member_1')
-        len(leaders_around_me).should.equal(self.leaderboard.page_size / 2 + 1)
+        len(leaders_around_me).should.equal(self.leaderboard.page_size // 2 + 1)
 
         leaders_around_me = self.leaderboard.around_me('member_76')
-        (len(leaders_around_me) /
-         2).should.equal(self.leaderboard.page_size /
-                         2)
+        (len(leaders_around_me) // 2).should.equal(self.leaderboard.page_size // 2)
+
+        leaders_around_me = self.leaderboard.around_me('member_76', page_size=1)
+        (len(leaders_around_me) // 2).should.equal(0)
 
     def test_members_only(self):
         exp = [{'member': 'member_%d' % x} for x in reversed(range(1, 27))]
