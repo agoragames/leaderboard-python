@@ -21,15 +21,14 @@ class TieRankingLeaderboard(Leaderboard):
         connection : an existing redis handle if re-using for this leaderboard
         connection_pool : redis connection pool to use if creating a new handle
         '''
-        super(TieRankingLeaderboard, self).__init__(
-            leaderboard_name, **options)
-
-        self.leaderboard_name = leaderboard_name
         self.options = options
-
         self.ties_namespace = self.options.pop(
             'ties_namespace',
             self.DEFAULT_TIES_NAMESPACE)
+        self.leaderboard_name = leaderboard_name
+
+        super(TieRankingLeaderboard, self).__init__(
+            leaderboard_name, **options)
 
     def delete_leaderboard_named(self, leaderboard_name):
         '''

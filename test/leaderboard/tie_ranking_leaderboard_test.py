@@ -230,6 +230,10 @@ class TieRankingLeaderboardTest(unittest.TestCase):
         self.leaderboard.rank_for('member_1').should.equal(2)
         self.leaderboard.rank_for('member_2').should.equal(2)
 
+    def test_it_should_correctly_pop_ties_namespace_from_options(self):
+        self.leaderboard = TieRankingLeaderboard('ties', ties_namespace='ties_namespace')
+        self.__rank_members_in_leaderboard(26)
+
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(
