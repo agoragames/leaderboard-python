@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 3.7.1 (2018-02-20)
+
+* Fix `around_me_in` for Python 3+ [#49](https://github.com/agoragames/leaderboard-python/issues/49)
+* Fix TieRankingLeaderboard init [#47](https://github.com/agoragames/leaderboard-python/pull/51)
+
 ## 3.7.0 (2017-02-03)
 
 * Fixed an error with the `ranked_in_list` method when using certain options [#46](https://github.com/agoragames/leaderboard-python/pull/46)
