@@ -44,9 +44,21 @@ The default options are as follows:
     MEMBER_DATA_KEY = 'member_data'
     SCORE_KEY = 'score'
     RANK_KEY = 'rank'
+    DEFAULT_CLUSTER_MODE = False
 ```
 
 You would use the option, `order=Leaderboard.ASC`, if you wanted a leaderboard sorted from lowest-to-highest score. You may also set the `order` option on a leaderboard after you have created a new instance of a leaderboard. The various `..._KEY` options above control what data is returned in the hash of leaderboard data from calls such as `leaders` or `around_me`. Finally, the `global_member_data` option allows you to control whether optional member data is per-leaderboard (`False`) or global (`True`).
+
+### Using cluster mode
+
+```python
+Leaderboard(
+    <leader_board_name>,
+    host=<cluster_endpoint>,
+    db=0, # only one db supported in cluster mode
+    cluster_mode=True
+)
+```
 
 ### Ranking members in the leaderboard
 

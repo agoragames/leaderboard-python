@@ -33,6 +33,7 @@ class Leaderboard(object):
     MEMBER_DATA_KEY = 'member_data'
     SCORE_KEY = 'score'
     RANK_KEY = 'rank'
+    DEFAULT_CLUSTER_MODE = False
 
     @classmethod
     def pool(self, host, port, db, pools={}, **options):
@@ -101,7 +102,7 @@ class Leaderboard(object):
                     self.options.pop('pools', self.DEFAULT_POOLS),
                     **self.options
                 )
-            if not self.options.get("cluster_mode", False):
+            if not self.options.get("cluster_mode", self.DEFAULT_CLUSTER_MODE):
                 self.redis_connection = Redis(**self.options)
             else:
                 startup_nodes = [{"host": host, "port": port}]
@@ -234,8 +235,7 @@ class Leaderboard(object):
         if current_score is not None:
             current_score = float(current_score)
 
-        if rank_conditional(self, member, current_score, score, member_data,
-                            {'reverse': self.order}):
+        if rank_conditional(self, member, current_score, score, member_data, {'reverse': self.order}):
             self.rank_member_in(leaderboard_name, member, score, member_data)
 
     def rank_members(self, members_and_scores):
