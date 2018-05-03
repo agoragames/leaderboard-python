@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 3.7.2 (unreleased)
+## 3.7.2 (2018-05-03)
 
 * Fix running under Python 3 for `ranked_in_list(...)` if `include_missing` is `True` and non-member(s) passed in
 
