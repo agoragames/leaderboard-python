@@ -1083,13 +1083,13 @@ class Leaderboard(object):
             if self.RANK_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
-                    key=lambda member: member[
-                        self.RANK_KEY])
+                    key=lambda member: member.get(self.RANK_KEY) or -1
+                )
             elif self.SCORE_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
-                    key=lambda member: member[
-                        self.SCORE_KEY])
+                    key=lambda member: member.get(self.SCORE_KEY) or -1
+                )
 
         return ranks_for_members
 
