@@ -668,6 +668,14 @@ class LeaderboardTest(unittest.TestCase):
         leaders[1]['member'].should.equal('member_25')
         leaders[2]['member'].should.equal('member_81')
 
+        self.leaderboard.order = Leaderboard.ASC
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_1', 'member_81', 'member_25'], sort_by='rank')
+        len(leaders).should.equal(3)
+        leaders[0]['member'].should.equal('member_81')
+        leaders[1]['member'].should.equal('member_1')
+        leaders[2]['member'].should.equal('member_25')
+
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(
