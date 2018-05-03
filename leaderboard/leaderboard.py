@@ -1080,15 +1080,16 @@ class Leaderboard(object):
                     pass
 
         if 'sort_by' in options:
+            sort_value_if_none = float('-inf') if self.order == self.ASC else float('+inf')
             if self.RANK_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
-                    key=lambda member: member.get(self.RANK_KEY) or -1
+                    key=lambda member: member.get(self.RANK_KEY) or sort_value_if_none
                 )
             elif self.SCORE_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
-                    key=lambda member: member.get(self.SCORE_KEY) or -1
+                    key=lambda member: member.get(self.SCORE_KEY) or sort_value_if_none
                 )
 
         return ranks_for_members
