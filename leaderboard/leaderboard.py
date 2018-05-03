@@ -16,7 +16,7 @@ def grouper(n, iterable, fillvalue=None):
 
 
 class Leaderboard(object):
-    VERSION = '3.5.0'
+    VERSION = '3.7.2'
     DEFAULT_PAGE_SIZE = 25
     DEFAULT_REDIS_HOST = 'localhost'
     DEFAULT_REDIS_PORT = 6379
@@ -1080,16 +1080,17 @@ class Leaderboard(object):
                     pass
 
         if 'sort_by' in options:
+            sort_value_if_none = float('-inf') if self.order == self.ASC else float('+inf')
             if self.RANK_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
-                    key=lambda member: member[
-                        self.RANK_KEY])
+                    key=lambda member: member.get(self.RANK_KEY) or sort_value_if_none
+                )
             elif self.SCORE_KEY == options['sort_by']:
                 ranks_for_members = sorted(
                     ranks_for_members,
-                    key=lambda member: member[
-                        self.SCORE_KEY])
+                    key=lambda member: member.get(self.SCORE_KEY) or sort_value_if_none
+                )
 
         return ranks_for_members
 
