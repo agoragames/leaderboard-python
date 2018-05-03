@@ -18,7 +18,7 @@ class LeaderboardTest(unittest.TestCase):
         Leaderboard.MEMBER_DATA_KEY = 'member_data'
 
     def test_version(self):
-        Leaderboard.VERSION.should.equal('3.7.2')
+        Leaderboard.VERSION.should.equal('3.5.0')
 
     def test_init_with_defaults(self):
         'name'.should.equal(self.leaderboard.leaderboard_name)
@@ -641,40 +641,6 @@ class LeaderboardTest(unittest.TestCase):
         self.__rank_members_in_leaderboard(26)
 
         self.leaderboard.total_scores().should.equal(325.0)
-
-    def test_ranked_in_list_with_include_missing_sort_by_rank_and_missing_members(self):
-        self.__rank_members_in_leaderboard(27)
-        leaders = self.leaderboard.ranked_in_list(
-            ['member_1', 'member_81', 'member_25'], sort_by='rank')
-        len(leaders).should.equal(3)
-        leaders[0]['member'].should.equal('member_25')
-        leaders[1]['member'].should.equal('member_1')
-        leaders[2]['member'].should.equal('member_81')
-
-        self.leaderboard.order = Leaderboard.ASC
-        leaders = self.leaderboard.ranked_in_list(
-            ['member_1', 'member_81', 'member_25'], sort_by='rank')
-        len(leaders).should.equal(3)
-        leaders[0]['member'].should.equal('member_81')
-        leaders[1]['member'].should.equal('member_1')
-        leaders[2]['member'].should.equal('member_25')
-
-    def test_ranked_in_list_with_include_missing_sort_by_score_and_missing_members(self):
-        self.__rank_members_in_leaderboard(27)
-        leaders = self.leaderboard.ranked_in_list(
-            ['member_1', 'member_81', 'member_25'], sort_by='score')
-        len(leaders).should.equal(3)
-        leaders[0]['member'].should.equal('member_1')
-        leaders[1]['member'].should.equal('member_25')
-        leaders[2]['member'].should.equal('member_81')
-
-        self.leaderboard.order = Leaderboard.ASC
-        leaders = self.leaderboard.ranked_in_list(
-            ['member_1', 'member_81', 'member_25'], sort_by='rank')
-        len(leaders).should.equal(3)
-        leaders[0]['member'].should.equal('member_81')
-        leaders[1]['member'].should.equal('member_1')
-        leaders[2]['member'].should.equal('member_25')
 
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):

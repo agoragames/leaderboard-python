@@ -1,9 +1,5 @@
 # CHANGELOG
 
-## 3.7.2 (2018-05-03)
-
-* Fix running under Python 3 for `ranked_in_list(...)` if `include_missing` is `True` and non-member(s) passed in
-
 ## 3.7.1 (2018-02-20)
 
 * Fix `around_me_in` for Python 3+ [#49](https://github.com/agoragames/leaderboard-python/issues/49)
