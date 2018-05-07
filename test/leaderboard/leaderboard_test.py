@@ -18,7 +18,7 @@ class LeaderboardTest(unittest.TestCase):
         Leaderboard.MEMBER_DATA_KEY = 'member_data'
 
     def test_version(self):
-        Leaderboard.VERSION.should.equal('3.7.2')
+        Leaderboard.VERSION.should.equal('3.7.3')
 
     def test_init_with_defaults(self):
         'name'.should.equal(self.leaderboard.leaderboard_name)
@@ -675,6 +675,19 @@ class LeaderboardTest(unittest.TestCase):
         leaders[0]['member'].should.equal('member_81')
         leaders[1]['member'].should.equal('member_1')
         leaders[2]['member'].should.equal('member_25')
+
+    def test_ranked_in_list_with_include_missing_sort_by_score_and_negative_and_zero_score(self):
+        self.__rank_members_in_leaderboard()
+        self.leaderboard.rank_member('member_-1', -1)
+        self.leaderboard.rank_member('member_0', 0)
+        leaders = self.leaderboard.ranked_in_list(
+            ['member_-1', 'member_0', 'member_1', 'member_3', 'member_200'], sort_by='score')
+        len(leaders).should.equal(5)
+        leaders[0]['member'].should.equal('member_-1')
+        leaders[1]['member'].should.equal('member_0')
+        leaders[2]['member'].should.equal('member_1')
+        leaders[3]['member'].should.equal('member_3')
+        leaders[4]['member'].should.equal('member_200')
 
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
