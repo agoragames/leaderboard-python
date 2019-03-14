@@ -194,7 +194,7 @@ highscore_lb.score_for('david')
 ### Ranking a member across multiple leaderboards
 
 ```python
-highscore_lb.rank_member_across(['highscores', 'more_highscores'], 'david', 50000, { 'member_name': 'david' })
+highscore_lb.rank_member_across(['highscores', 'more_highscores'], 'david', 50000, str({'member_name': 'david'}))
 ```
 
 ### Alternate leaderboard types
