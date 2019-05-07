@@ -34,7 +34,7 @@ class Leaderboard(object):
     @classmethod
     def pool(self, host, port, db, pools={}, **options):
         '''
-        Fetch a redis conenction pool for the unique combination of host
+        Fetch a redis connection pool for the unique combination of host
         and port. Will create a new one if there isn't one already.
         '''
         key = (host, port, db)
