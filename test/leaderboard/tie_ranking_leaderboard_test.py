@@ -8,7 +8,7 @@ import sure
 class TieRankingLeaderboardTest(unittest.TestCase):
 
     def setUp(self):
-        self.leaderboard = TieRankingLeaderboard('ties')
+        self.leaderboard = TieRankingLeaderboard('ties', decode_responses=True)
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()

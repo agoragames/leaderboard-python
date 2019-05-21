@@ -9,7 +9,7 @@ import sure
 class ReverseTieRankingLeaderboardTest(unittest.TestCase):
 
     def setUp(self):
-        self.leaderboard = TieRankingLeaderboard('ties', order=Leaderboard.ASC)
+        self.leaderboard = TieRankingLeaderboard('ties', order=Leaderboard.ASC, decode_responses=True)
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()

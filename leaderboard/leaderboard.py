@@ -778,7 +778,7 @@ class Leaderboard(object):
         '''
         return self.leaders_in(self.leaderboard_name, current_page, **options)
 
-    def leaders_in(self, leaderboard_name, current_page, **options):
+    def leaders_in(self, leaderboard_name, current_page, members_only=False, **options):
         '''
         Retrieve a page of leaders from the named leaderboard.
 
@@ -800,14 +800,33 @@ class Leaderboard(object):
 
         ending_offset = (starting_offset + page_size) - 1
 
-        raw_leader_data = self._range_method(
+        response = self._range_method(
             self.redis_connection,
             leaderboard_name,
             int(starting_offset),
             int(ending_offset),
-            withscores=False)
-        return self._parse_raw_members(
-            leaderboard_name, raw_leader_data, **options)
+            withscores=not members_only)
+
+        if members_only:
+            return [{self.MEMBER_KEY: member} for member in response]
+
+        members = []
+        ranks_for_members = []
+        for i, (member, score) in enumerate(response):
+            members.append(member)
+            ranks_for_members.append({
+                self.MEMBER_KEY: member,
+                self.RANK_KEY: starting_offset + i + 1,
+                self.SCORE_KEY: score,
+            })
+
+        if options.get('with_member_data', False):
+            self._with_member_data(leaderboard_name, members, ranks_for_members)
+
+        if 'sort_by' in options:
+            self._sort_by(ranks_for_members, options['sort_by'])
+
+        return ranks_for_members
 
     def all_leaders(self, **options):
         '''
@@ -1072,26 +1091,31 @@ class Leaderboard(object):
 
             ranks_for_members.append(data)
 
-        if ('with_member_data' in options) and (True == options['with_member_data']):
-            for index, member_data in enumerate(self.members_data_for_in(leaderboard_name, members)):
-                try:
-                    ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
-                except:
-                    pass
+        if options.get('with_member_data', False):
+            self._with_member_data(leaderboard_name, members, ranks_for_members)
 
         if 'sort_by' in options:
-            sort_value_if_none = float('-inf') if self.order == self.ASC else float('+inf')
-            if self.RANK_KEY == options['sort_by']:
-                ranks_for_members = sorted(
-                    ranks_for_members,
-                    key=lambda member: member.get(self.RANK_KEY) if member.get(self.RANK_KEY) is not None else sort_value_if_none
-                )
-            elif self.SCORE_KEY == options['sort_by']:
-                ranks_for_members = sorted(
-                    ranks_for_members,
-                    key=lambda member: member.get(self.SCORE_KEY) if member.get(self.SCORE_KEY) is not None else sort_value_if_none
-                )
+            self._sort_by(ranks_for_members, options['sort_by'])
 
+        return ranks_for_members
+
+    def _with_member_data(self, leaderboard_name, members, ranks_for_members):
+        for index, member_data in enumerate(self.members_data_for_in(leaderboard_name, members)):
+            try:
+                ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
+            except:
+                pass
+
+    def _sort_by(self, ranks_for_members, sort_by):
+        sort_value_if_none = float('-inf') if self.order == self.ASC else float('+inf')
+        if self.RANK_KEY == sort_by:
+            ranks_for_members.sort(
+                key=lambda member: member.get(self.RANK_KEY) if member.get(self.RANK_KEY) is not None else sort_value_if_none
+            )
+        elif self.SCORE_KEY == sort_by:
+            ranks_for_members.sort(
+                key=lambda member: member.get(self.SCORE_KEY) if member.get(self.SCORE_KEY) is not None else sort_value_if_none
+            )
         return ranks_for_members
 
     def merge_leaderboards(self, destination, keys, aggregate='SUM'):

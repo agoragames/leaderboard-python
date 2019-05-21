@@ -10,7 +10,7 @@ class ReverseCompetitionRankingLeaderboardTest(unittest.TestCase):
 
     def setUp(self):
         self.leaderboard = CompetitionRankingLeaderboard(
-            'ties', order=Leaderboard.ASC)
+            'ties', order=Leaderboard.ASC, decode_responses=True)
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()
