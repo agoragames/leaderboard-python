@@ -32,7 +32,7 @@ class Leaderboard(object):
     RANK_KEY = 'rank'
 
     @classmethod
-    def pool(self, host, port, db, pools={}, **options):
+    def pool(cls, host, port, db, pools={}, **options):
         '''
         Fetch a redis connection pool for the unique combination of host
         and port. Will create a new one if there isn't one already.
@@ -74,7 +74,7 @@ class Leaderboard(object):
             self.DEFAULT_GLOBAL_MEMBER_DATA)
 
         self.order = self.options.pop('order', self.DESC).lower()
-        if not self.order in [self.ASC, self.DESC]:
+        if self.order not in [self.ASC, self.DESC]:
             raise ValueError(
                 "%s is not one of [%s]" % (self.order, ",".join([self.ASC, self.DESC])))
 
@@ -778,7 +778,7 @@ class Leaderboard(object):
         '''
         return self.leaders_in(self.leaderboard_name, current_page, **options)
 
-    def leaders_in(self, leaderboard_name, current_page, members_only=False, **options):
+    def leaders_in(self, leaderboard_name, current_page, **options):
         '''
         Retrieve a page of leaders from the named leaderboard.
 
@@ -800,33 +800,11 @@ class Leaderboard(object):
 
         ending_offset = (starting_offset + page_size) - 1
 
-        response = self._range_method(
-            self.redis_connection,
+        return self._members_from_rank_range_internal(
             leaderboard_name,
             int(starting_offset),
             int(ending_offset),
-            withscores=not members_only)
-
-        if members_only:
-            return [{self.MEMBER_KEY: member} for member in response]
-
-        members = []
-        ranks_for_members = []
-        for i, (member, score) in enumerate(response):
-            members.append(member)
-            ranks_for_members.append({
-                self.MEMBER_KEY: member,
-                self.RANK_KEY: starting_offset + i + 1,
-                self.SCORE_KEY: score,
-            })
-
-        if options.get('with_member_data', False):
-            self._with_member_data(leaderboard_name, members, ranks_for_members)
-
-        if 'sort_by' in options:
-            self._sort_by(ranks_for_members, options['sort_by'])
-
-        return ranks_for_members
+            **options)
 
     def all_leaders(self, **options):
         '''
@@ -845,10 +823,8 @@ class Leaderboard(object):
         @param options [Hash] Options to be used when retrieving the leaders from the named leaderboard.
         @return the named leaderboard.
         '''
-        raw_leader_data = self._range_method(
-            self.redis_connection, leaderboard_name, 0, -1, withscores=False)
-        return self._parse_raw_members(
-            leaderboard_name, raw_leader_data, **options)
+        return self._members_from_rank_range_internal(
+            leaderboard_name, 0, -1, **options)
 
     def members_from_score_range(
             self, minimum_score, maximum_score, **options):
@@ -919,22 +895,8 @@ class Leaderboard(object):
         if ending_rank > self.total_members_in(leaderboard_name):
             ending_rank = self.total_members_in(leaderboard_name) - 1
 
-        raw_leader_data = []
-        if self.order == self.DESC:
-            raw_leader_data = self.redis_connection.zrevrange(
-                leaderboard_name,
-                starting_rank,
-                ending_rank,
-                withscores=False)
-        else:
-            raw_leader_data = self.redis_connection.zrange(
-                leaderboard_name,
-                starting_rank,
-                ending_rank,
-                withscores=False)
-
-        return self._parse_raw_members(
-            leaderboard_name, raw_leader_data, **options)
+        return self._members_from_rank_range_internal(
+            leaderboard_name, starting_rank, ending_rank, **options)
 
     def top(self, number, **options):
         '''
@@ -1031,14 +993,11 @@ class Leaderboard(object):
 
         ending_offset = (starting_offset + page_size) - 1
 
-        raw_leader_data = self._range_method(
-            self.redis_connection,
+        return self._members_from_rank_range_internal(
             leaderboard_name,
             int(starting_offset),
             int(ending_offset),
-            withscores=False)
-        return self._parse_raw_members(
-            leaderboard_name, raw_leader_data, **options)
+            **options)
 
     def ranked_in_list(self, members, **options):
         '''
@@ -1177,3 +1136,39 @@ class Leaderboard(object):
             return self.ranked_in_list_in(leaderboard_name, members, **options)
         else:
             return []
+
+    def _members_from_rank_range_internal(
+            self, leaderboard_name, start_rank, end_rank, members_only=False, **options):
+        '''
+        Format ordered members with score as efficiently as possible.
+        '''
+        response = self._range_method(
+            self.redis_connection,
+            leaderboard_name,
+            start_rank,
+            end_rank,
+            withscores=not members_only)
+
+        if members_only or not response:
+            return [{self.MEMBER_KEY: member} for member in response]
+
+        current_rank = start_rank
+        members = []
+        ranks_for_members = []
+        for index, (member, score) in enumerate(response):
+            members.append(member)
+            current_rank += 1
+            member_entry = {
+                self.MEMBER_KEY: member,
+                self.RANK_KEY: current_rank,
+                self.SCORE_KEY: score,
+            }
+            ranks_for_members.append(member_entry)
+
+        if options.get('with_member_data', False):
+            self._with_member_data(leaderboard_name, members, ranks_for_members)
+
+        if 'sort_by' in options:
+            self._sort_by(ranks_for_members, options['sort_by'])
+
+        return ranks_for_members

@@ -1,7 +1,6 @@
 from .leaderboard import Leaderboard
 from .leaderboard import grouper
-from redis import StrictRedis, Redis, ConnectionPool
-import math
+from redis import Redis
 
 
 class TieRankingLeaderboard(Leaderboard):
@@ -120,7 +119,7 @@ class TieRankingLeaderboard(Leaderboard):
         @param member_data [String] Optional member data.
         '''
         for leaderboard_name in leaderboards:
-            self.rank_member_in(leaderboard, member, score, member_data)
+            self.rank_member_in(leaderboard_name, member, score, member_data)
 
     def rank_members_in(self, leaderboard_name, members_and_scores):
         '''
@@ -271,24 +270,11 @@ class TieRankingLeaderboard(Leaderboard):
 
             ranks_for_members.append(data)
 
-        if ('with_member_data' in options) and (True == options['with_member_data']):
-            for index, member_data in enumerate(self.members_data_for_in(leaderboard_name, members)):
-                try:
-                    ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
-                except:
-                    pass
+        if options.get('with_member_data', False):
+            self._with_member_data(leaderboard_name, members, ranks_for_members)
 
         if 'sort_by' in options:
-            if self.RANK_KEY == options['sort_by']:
-                ranks_for_members = sorted(
-                    ranks_for_members,
-                    key=lambda member: member[
-                        self.RANK_KEY])
-            elif self.SCORE_KEY == options['sort_by']:
-                ranks_for_members = sorted(
-                    ranks_for_members,
-                    key=lambda member: member[
-                        self.SCORE_KEY])
+            self._sort_by(ranks_for_members, options['sort_by'])
 
         return ranks_for_members
 
@@ -300,3 +286,44 @@ class TieRankingLeaderboard(Leaderboard):
         @return a key in the form of +leaderboard_name:ties_namespace+
         '''
         return '%s:%s' % (leaderboard_name, self.ties_namespace)
+
+    def _members_from_rank_range_internal(
+            self, leaderboard_name, start_rank, end_rank, members_only=False, **options):
+        '''
+        Format ordered members with score as efficiently as possible.
+        '''
+        response = self._range_method(
+            self.redis_connection,
+            leaderboard_name,
+            start_rank,
+            end_rank,
+            withscores=not members_only)
+
+        if members_only or not response:
+            return [{self.MEMBER_KEY: member} for member in response]
+
+        current_member, current_score = response[0]
+        current_rank = self.rank_for_in(leaderboard_name, current_member)
+        current_score = response[0][1]
+        members = []
+        ranks_for_members = []
+        for index, (member, score) in enumerate(response):
+            if score != current_score:
+                current_rank += 1
+                current_score = score
+
+            members.append(member)
+            member_entry = {
+                self.MEMBER_KEY: member,
+                self.RANK_KEY: current_rank,
+                self.SCORE_KEY: score,
+            }
+            ranks_for_members.append(member_entry)
+
+        if options.get('with_member_data', False):
+            self._with_member_data(leaderboard_name, members, ranks_for_members)
+
+        if 'sort_by' in options:
+            self._sort_by(ranks_for_members, options['sort_by'])
+
+        return ranks_for_members

@@ -1,6 +1,4 @@
 from .leaderboard import Leaderboard
-from redis import StrictRedis, Redis, ConnectionPool
-import math
 
 
 class CompetitionRankingLeaderboard(Leaderboard):
@@ -78,22 +76,15 @@ class CompetitionRankingLeaderboard(Leaderboard):
         scores = []
 
         pipeline = self.redis_connection.pipeline()
-
         for member in members:
-            if self.order == self.ASC:
-                pipeline.zrank(leaderboard_name, member)
-            else:
-                pipeline.zrevrank(leaderboard_name, member)
-
             pipeline.zscore(leaderboard_name, member)
-
         responses = pipeline.execute()
 
         for index, member in enumerate(members):
             data = {}
             data[self.MEMBER_KEY] = member
 
-            score = responses[index * 2 + 1]
+            score = responses[index]
             if score is not None:
                 score = float(score)
             else:
@@ -108,21 +99,11 @@ class CompetitionRankingLeaderboard(Leaderboard):
         for index, rank in enumerate(self.__rankings_for_members_having_scores_in(leaderboard_name, members, scores)):
             ranks_for_members[index][self.RANK_KEY] = rank
 
-        if ('with_member_data' in options) and (True == options['with_member_data']):
-            for index, member_data in enumerate(self.members_data_for_in(leaderboard_name, members)):
-                ranks_for_members[index][self.MEMBER_DATA_KEY] = member_data
+        if options.get('with_member_data', False):
+            self._with_member_data(leaderboard_name, members, ranks_for_members)
 
         if 'sort_by' in options:
-            if self.RANK_KEY == options['sort_by']:
-                ranks_for_members = sorted(
-                    ranks_for_members,
-                    key=lambda member: member[
-                        self.RANK_KEY])
-            elif self.SCORE_KEY == options['sort_by']:
-                ranks_for_members = sorted(
-                    ranks_for_members,
-                    key=lambda member: member[
-                        self.SCORE_KEY])
+            self._sort_by(ranks_for_members, options['sort_by'])
 
         return ranks_for_members
 
@@ -150,3 +131,55 @@ class CompetitionRankingLeaderboard(Leaderboard):
         responses = pipeline.execute()
 
         return [self.__up_rank(response) for response in responses]
+
+    def _members_from_rank_range_internal(
+            self, leaderboard_name, start_rank, end_rank, members_only=False, **options):
+        '''
+        Format ordered members with score as efficiently as possible.
+        '''
+        response = self._range_method(
+            self.redis_connection,
+            leaderboard_name,
+            start_rank,
+            end_rank,
+            withscores=not members_only)
+
+        if members_only or not response:
+            return [{self.MEMBER_KEY: member} for member in response]
+
+        # Find out where the current rank started using the first two ranks
+        current_rank = None
+        current_score = None
+        current_rank_start = 0
+        for index, (member, score) in enumerate(response):
+            if current_score is None:
+                current_rank = self.rank_for_in(leaderboard_name, member)
+                current_score = score
+            elif score != current_score:
+                next_rank = self.rank_for_in(leaderboard_name, member)
+                current_rank_start = current_rank - next_rank + index
+                break
+
+        members = []
+        ranks_for_members = []
+        for index, (member, score) in enumerate(response):
+            members.append(member)
+            if score != current_score:
+                current_rank += (index - current_rank_start)
+                current_rank_start = index
+                current_score = score
+
+            member_entry = {
+                self.MEMBER_KEY: member,
+                self.RANK_KEY: current_rank,
+                self.SCORE_KEY: score,
+            }
+            ranks_for_members.append(member_entry)
+
+        if options.get('with_member_data', False):
+            self._with_member_data(leaderboard_name, members, ranks_for_members)
+
+        if 'sort_by' in options:
+            self._sort_by(ranks_for_members, options['sort_by'])
+
+        return ranks_for_members
