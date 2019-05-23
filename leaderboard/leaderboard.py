@@ -1,8 +1,11 @@
 from __future__ import division
 
-from redis import StrictRedis, Redis, ConnectionPool
 import math
 import sys
+
+from redis import StrictRedis, Redis, ConnectionPool
+from rediscluster import StrictRedisCluster
+
 if sys.version_info.major == 3:
     from itertools import zip_longest
 else:
@@ -30,6 +33,7 @@ class Leaderboard(object):
     MEMBER_DATA_KEY = 'member_data'
     SCORE_KEY = 'score'
     RANK_KEY = 'rank'
+    DEFAULT_CLUSTER_MODE = False
 
     @classmethod
     def pool(self, host, port, db, pools={}, **options):
@@ -87,15 +91,26 @@ class Leaderboard(object):
             connection = self.options.pop('connection', None)
             if isinstance(connection, (StrictRedis, Redis)):
                 self.options['connection_pool'] = connection.connection_pool
+
+            host = self.options.pop('host', self.DEFAULT_REDIS_HOST)
+            port = self.options.pop('port', self.DEFAULT_REDIS_PORT)
             if 'connection_pool' not in self.options:
                 self.options['connection_pool'] = self.pool(
-                    self.options.pop('host', self.DEFAULT_REDIS_HOST),
-                    self.options.pop('port', self.DEFAULT_REDIS_PORT),
+                    host,
+                    port,
                     self.options.pop('db', self.DEFAULT_REDIS_DB),
                     self.options.pop('pools', self.DEFAULT_POOLS),
                     **self.options
                 )
-            self.redis_connection = Redis(**self.options)
+            if not self.options.get("cluster_mode", self.DEFAULT_CLUSTER_MODE):
+                self.redis_connection = Redis(**self.options)
+            else:
+                startup_nodes = [{"host": host, "port": port}]
+                self.redis_connection = StrictRedisCluster(
+                    startup_nodes=startup_nodes,
+                    decode_responses=True,
+                    skip_full_coverage_check=True
+                )
 
     def delete_leaderboard(self):
         '''

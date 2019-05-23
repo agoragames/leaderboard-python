@@ -29,3 +29,7 @@ pip-log.txt
 .mr.developer.cfg
 /.project
 /.pydevproject
+
+.venv/
+.idea/
+.ipynb_checkpoints/
