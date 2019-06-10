@@ -1,4 +1,3 @@
-from redis import Redis, StrictRedis, ConnectionPool
 from leaderboard.leaderboard import Leaderboard
 from leaderboard.tie_ranking_leaderboard import TieRankingLeaderboard
 import unittest
@@ -9,7 +8,7 @@ import sure
 class ReverseTieRankingLeaderboardTest(unittest.TestCase):
 
     def setUp(self):
-        self.leaderboard = TieRankingLeaderboard('ties', order=Leaderboard.ASC)
+        self.leaderboard = TieRankingLeaderboard('ties', order=Leaderboard.ASC, decode_responses=True)
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()
