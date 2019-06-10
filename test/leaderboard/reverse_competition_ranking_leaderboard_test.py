@@ -1,8 +1,6 @@
-from redis import Redis, StrictRedis, ConnectionPool
 from leaderboard.leaderboard import Leaderboard
 from leaderboard.competition_ranking_leaderboard import CompetitionRankingLeaderboard
 import unittest
-import time
 import sure
 
 
@@ -10,7 +8,7 @@ class ReverseCompetitionRankingLeaderboardTest(unittest.TestCase):
 
     def setUp(self):
         self.leaderboard = CompetitionRankingLeaderboard(
-            'ties', order=Leaderboard.ASC)
+            'ties', order=Leaderboard.ASC, decode_responses=True)
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()

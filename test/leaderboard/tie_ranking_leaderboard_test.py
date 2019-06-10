@@ -1,4 +1,3 @@
-from redis import Redis, StrictRedis, ConnectionPool
 from leaderboard.tie_ranking_leaderboard import TieRankingLeaderboard
 import unittest
 import time
@@ -8,7 +7,7 @@ import sure
 class TieRankingLeaderboardTest(unittest.TestCase):
 
     def setUp(self):
-        self.leaderboard = TieRankingLeaderboard('ties')
+        self.leaderboard = TieRankingLeaderboard('ties', decode_responses=True)
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()
