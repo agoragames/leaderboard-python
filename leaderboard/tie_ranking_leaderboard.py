@@ -302,21 +302,21 @@ class TieRankingLeaderboard(Leaderboard):
         if members_only or not response:
             return [{self.MEMBER_KEY: member} for member in response]
 
-        current_member, current_score = response[0]
-        current_rank = self.rank_for_in(leaderboard_name, current_member)
-        current_score = response[0][1]
+        starting_member, starting_score = response[0]
+        current_rank = self.rank_for_in(leaderboard_name, starting_member)
+        current_score = starting_score
         members = []
         ranks_for_members = []
-        for index, (member, score) in enumerate(response):
-            if score != current_score:
+        for index, (member, member_score) in enumerate(response):
+            if member_score != current_score:
                 current_rank += 1
-                current_score = score
+                current_score = member_score
 
             members.append(member)
             member_entry = {
                 self.MEMBER_KEY: member,
                 self.RANK_KEY: current_rank,
-                self.SCORE_KEY: score,
+                self.SCORE_KEY: member_score,
             }
             ranks_for_members.append(member_entry)
 
