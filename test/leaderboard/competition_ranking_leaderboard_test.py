@@ -8,7 +8,7 @@ import sure
 class CompetitionRankingLeaderboardTest(unittest.TestCase):
 
     def setUp(self):
-        self.leaderboard = CompetitionRankingLeaderboard('ties', decode_responses=True)
+        self.leaderboard = CompetitionRankingLeaderboard('ties')
 
     def tearDown(self):
         self.leaderboard.redis_connection.flushdb()
