@@ -230,6 +230,12 @@ class TieRankingLeaderboardTest(unittest.TestCase):
         self.leaderboard.rank_for('member_1').should.equal(2)
         self.leaderboard.rank_for('member_2').should.equal(2)
 
+    def test_rank_member_across(self):
+        self.leaderboard.rank_member_across(
+            ['highscores', 'more_highscores'], 'david', 50000, {'member_name': 'david'})
+        len(self.leaderboard.leaders_in('highscores', 1)).should.equal(1)
+        len(self.leaderboard.leaders_in('more_highscores', 1)).should.equal(1)
+
     def test_it_should_correctly_pop_ties_namespace_from_options(self):
         self.leaderboard = TieRankingLeaderboard('ties', ties_namespace='ties_namespace')
         self.__rank_members_in_leaderboard(26)
