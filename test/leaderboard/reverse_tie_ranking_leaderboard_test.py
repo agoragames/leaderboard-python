@@ -187,7 +187,7 @@ class ReverseTieRankingLeaderboardTest(unittest.TestCase):
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(
-                'member_%s' %
-                index, index, {
-                    'member_name': 'Leaderboard member %s' %
-                    index})
+                'member_%s' % index,
+                index,
+                str({'member_name': 'Leaderboard member %s' % index})
+            )

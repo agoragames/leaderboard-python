@@ -70,8 +70,7 @@ class LeaderboardTest(unittest.TestCase):
     def test_update_member_data(self):
         self.__rank_members_in_leaderboard()
         self.leaderboard.update_member_data(
-            'member_1', {
-                'member_name': 'Updated Leaderboard member 1'})
+            'member_1', str({'member_name': 'Updated Leaderboard member 1'}))
         self.leaderboard.member_data_for('member_1').should.eql(
             str({'member_name': 'Updated Leaderboard member 1'}))
 
@@ -498,7 +497,7 @@ class LeaderboardTest(unittest.TestCase):
 
     def test_rank_member_across(self):
         self.leaderboard.rank_member_across(
-            ['highscores', 'more_highscores'], 'david', 50000, {'member_name': 'david'})
+            ['highscores', 'more_highscores'], 'david', 50000, str({'member_name': 'david'}))
         len(self.leaderboard.leaders_in('highscores', 1)).should.equal(1)
         len(self.leaderboard.leaders_in('more_highscores', 1)).should.equal(1)
 
@@ -692,7 +691,7 @@ class LeaderboardTest(unittest.TestCase):
     def __rank_members_in_leaderboard(self, members_to_add=6):
         for index in range(1, members_to_add):
             self.leaderboard.rank_member(
-                'member_%s' %
-                index, index, {
-                    'member_name': 'Leaderboard member %s' %
-                    index})
+                'member_%s' % index,
+                index,
+                str({'member_name': 'Leaderboard member %s' % index})
+            )
